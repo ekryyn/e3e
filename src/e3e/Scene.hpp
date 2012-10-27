@@ -2,6 +2,13 @@
 #define SCENE_HPP
 
 #include <GL/glew.h>
+#include <vector>
+
+#include "Camera.hpp"
+#include "Matrix4f.hpp"
+#include "Matrix4fStack.hpp"
+#include "Node.hpp"
+#include "Shader.hpp"
 
 namespace e3e
 {
@@ -9,10 +16,33 @@ namespace e3e
 class Scene
 {
 public:
-	Scene();
+	Scene(int w, int h);
 
 	void drawAxis(float scale);
 	void render();
+
+	inline void matrixPush() { sceneMatrixStack.push(); applyMatrix(); }
+	inline void matrixPop() { sceneMatrixStack.pop(); applyMatrix(); }
+
+	inline void matrixTranslate(float x, float y, float z) {
+		sceneMatrixStack.translate(x,y,z); applyMatrix();
+	}
+
+	inline void matrixReplace(const Matrix4f &other){
+		sceneMatrixStack.replace(other); applyMatrix();
+	}
+
+	void applyMatrix();
+private:
+
+	Camera camera;
+	Shader projectionShader;
+
+	std::vector<Node> sceneNodes;
+
+	int w, h;
+
+	Matrix4fStack sceneMatrixStack;
 };
 
 }

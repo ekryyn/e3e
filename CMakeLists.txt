@@ -25,8 +25,11 @@ file(
 	GLOB
 	MAIN_SOURCES
 	src/*.cpp
-	src/e3e/*
+	src/e3e/*pp
 )
+
+configure_file(src/e3e/shaders/projection.vert shaders/projection.vert COPYONLY)
+
 
 add_executable(e3e-graphics ${MAIN_SOURCES})
 

@@ -31,6 +31,7 @@ public:
 	inline int getWidth(){ return w; }
 	inline int getHeight(){ return h; }
 
+
 private:
 	Application();
 	int w, h;

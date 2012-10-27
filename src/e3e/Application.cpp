@@ -7,7 +7,7 @@
 #include "KeyRegister.hpp"
 
 e3e::Application::Application():
-	w(600), h(600),
+	w(800), h(600),
 	_time(0),
 	lastTime(0)
 {
@@ -52,7 +52,7 @@ e3e::Application::Application():
 
 
 	// default scene
-	currentScene = new e3e::Scene();
+	currentScene = new e3e::Scene(w,h);
 
 }
 
