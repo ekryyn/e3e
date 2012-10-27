@@ -1,0 +1,131 @@
+#include "Application.hpp"
+#include <iostream>
+#include <cstdio>
+#include <sstream>
+#include <cmath>
+#include "EventManager.hpp"
+#include "KeyRegister.hpp"
+
+e3e::Application::Application():
+	w(600), h(600),
+	_time(0),
+	lastTime(0)
+{
+	srand(time(0));
+	EventManager::getInstance()->subscribe(this);
+	EventManager::getInstance()->subscribe(KeyRegister::getInstance());
+
+	sf::WindowSettings settings;
+	settings.DepthBits         = 16;
+	settings.StencilBits       = 8;
+	settings.AntialiasingLevel = 2;
+	window = new sf::Window(sf::VideoMode(w, h, 16), "SFML OpenGL", sf::Style::Close, settings);
+
+	fillColor = e3e::Color(1,1,1);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	//	glEnable (GL_BLEND);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_TEXTURE_2D);
+
+	GLenum code;
+	/* initialisation de GLEW */
+	code = glewInit();
+	if(code != GLEW_OK)
+	{
+		fprintf(stdout, "impossible d'initialiser GLEW : %s\n",
+				  glewGetErrorString(code));
+	}
+	else
+	{
+		fprintf(stdout, "glew OK\n");
+	}
+
+	if(glCreateShader == NULL)
+		std::cout << "shaders non supportes" << std::endl;
+	else
+		std::cout << "shaders OK" << std::endl;
+
+	fflush(stdout);
+
+
+	// default scene
+	currentScene = new e3e::Scene();
+
+}
+
+void e3e::Application::run()
+{
+
+	sf::Clock frameClock, globalClock;
+
+	running = true;
+
+
+	frameClock.Reset();
+	globalClock.Reset();
+
+	float fps = 1/60.f;
+	int frameCount = 0;
+
+	window->ShowMouseCursor(true);
+
+	while (running)
+	{
+		EventManager::getInstance()->captureEvent(window);
+
+		float elapsedTime	= frameClock.GetElapsedTime();
+		if(elapsedTime >= fps)
+		{
+			// -- OpenGL drawing
+			glClearColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a);
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			currentScene->render();
+
+			glFlush();
+			// --
+
+			window->Display();
+			frameClock.Reset();
+			frameCount++;
+		}
+
+		if(globalClock.GetElapsedTime() >= 1.f)
+		{
+			std::cout << "FPS: " << frameCount << std::endl;
+			globalClock.Reset();
+			frameCount = 0;
+		}
+	}
+}
+
+
+void e3e::Application::resetMouse()
+{
+	window->SetCursorPosition(w/2, h/2);
+}
+
+
+float e3e::Application::frameTime()
+{
+	return window->GetFrameTime();
+}
+
+void e3e::Application::onEvent(const sf::Event &event)
+{
+	switch(event.Type)
+	{
+	case sf::Event::Closed:
+		running = false;
+		break;
+
+	default:
+		break;
+
+	}
+}
+
+
