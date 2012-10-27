@@ -4,11 +4,27 @@
 #include "Mesh.hpp"
 
 e3e::Scene::Scene(int w, int h) :
-	camera(float(w)/float(h)),
+	camera(float(w)/float(h), 70.f),
 	w(w), h(h)
 {
 	projectionShader.loadVert("shaders/projection.vert");
 	projectionShader.link();
+
+	reloadProjectionMatrix();
+
+	// add test cube
+	e3e::Node *parent = new e3e::Node(this, new e3e::Mesh());
+	parent->translate(-1, 0, -15);
+
+	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
+	child->translate(2.2, 0, 0);
+//	parent->addChildNode(child);
+
+	sceneNodes.push_back( parent );
+}
+
+void e3e::Scene::reloadProjectionMatrix()
+{
 
 	GLint projectionMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
 																		  "projectionMatrix");
@@ -22,18 +38,6 @@ e3e::Scene::Scene(int w, int h) :
 	glUseProgram(0);
 
 	delete pmcm;
-
-
-
-	// add test cube
-	e3e::Node *parent = new e3e::Node(this, new e3e::Mesh());
-	parent->translate(0, 0, -5);
-
-	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
-	child->translate(2.2, 0, 0);
-	parent->addChildNode(child);
-
-	sceneNodes.push_back( parent );
 }
 
 void e3e::Scene::applyMatrix()
@@ -79,10 +83,9 @@ void e3e::Scene::render()
 		(*it)->render();
 //		(*it)->rotateXYZ(.005f, .020f, .015f);
 
-		(*it)->rotateXYZ(0, 0, .005f);
+//		(*it)->rotateXYZ(0, 0, .005f);
 //		(*it).translate(.005f, 0, 0);
 //		(*it).translate(0,0,.005f);
 	}
-
-
 }
+

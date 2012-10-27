@@ -37,6 +37,9 @@ public:
 	}
 
 	void applyMatrix();
+
+	void reloadProjectionMatrix();
+
 private:
 
 	Camera camera;

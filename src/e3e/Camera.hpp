@@ -9,14 +9,19 @@ namespace e3e
 class Camera
 {
 public:
-	Camera(double aspect);
+	Camera(double aspect, double fovy);
 
 	Matrix4f getProjectionMatrix() const;
 
+	void zoomIn();
+
 private:
+	void computeProjection();
+
 	double near;
 	double far;
 	double aspect;
+	double fovy;
 	double frustumScale;
 
 	Matrix4f projectionMatrix;

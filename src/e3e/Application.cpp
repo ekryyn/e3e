@@ -53,7 +53,6 @@ e3e::Application::Application():
 
 	// default scene
 	currentScene = new e3e::Scene(w,h);
-
 }
 
 void e3e::Application::run()
