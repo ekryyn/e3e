@@ -21,6 +21,7 @@ public:
 
 	void translate(float x, float y, float z);
 	void replace(const Matrix4f &newTransformation);
+	void transform(const Matrix4f &transformation);
 
 private:
 	std::vector<Matrix4f*> data;

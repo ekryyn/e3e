@@ -25,8 +25,16 @@ void e3e::Node::render()
 	if( entity )
 	{
 		scene->matrixPush();
-		scene->matrixReplace( worldTransformation );
+		scene->matrixTransform( worldTransformation );
 		entity->render();
+
+		std::vector<e3e::Node*>::iterator it;
+		for(it = children.begin(); it != children.end(); it++)
+		{
+			(*it)->rotateXYZ(0.015, 0, 0);
+			(*it)->render();
+		}
+
 		scene->matrixPop();
 	}
 }

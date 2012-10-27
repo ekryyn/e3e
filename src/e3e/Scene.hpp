@@ -32,13 +32,17 @@ public:
 		sceneMatrixStack.replace(other); applyMatrix();
 	}
 
+	inline void matrixTransform(const Matrix4f &t){
+		sceneMatrixStack.transform(t); applyMatrix();
+	}
+
 	void applyMatrix();
 private:
 
 	Camera camera;
 	Shader projectionShader;
 
-	std::vector<Node> sceneNodes;
+	std::vector<Node*> sceneNodes;
 
 	int w, h;
 

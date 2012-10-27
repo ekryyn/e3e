@@ -26,9 +26,14 @@ e3e::Scene::Scene(int w, int h) :
 
 
 	// add test cube
-	e3e::Node c(this, new e3e::Mesh());
-	c.translate(-2, 0, -5);
-	sceneNodes.push_back( c );
+	e3e::Node *parent = new e3e::Node(this, new e3e::Mesh());
+	parent->translate(0, 0, -5);
+
+	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
+	child->translate(2.2, 0, 0);
+	parent->addChildNode(child);
+
+	sceneNodes.push_back( parent );
 }
 
 void e3e::Scene::applyMatrix()
@@ -67,15 +72,17 @@ void e3e::Scene::render()
 
 	drawAxis(1.f);
 
-	std::vector<e3e::Node>::iterator it;
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	std::vector<e3e::Node*>::iterator it;
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{
-		(*it).render();
-		(*it).rotateXYZ(.005f, .020f, .015f);
+		(*it)->render();
+//		(*it)->rotateXYZ(.005f, .020f, .015f);
+
+		(*it)->rotateXYZ(0, 0, .005f);
 //		(*it).translate(.005f, 0, 0);
 //		(*it).translate(0,0,.005f);
 	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 }
