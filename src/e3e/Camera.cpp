@@ -8,7 +8,9 @@
 e3e::Camera::Camera(double aspect, double fovy) :
 	aspect(aspect),
 	fovy(fovy),
-	frustumScale(1.0f)
+	frustumScale(1.0f),
+	forward(0,0,-1),
+	up(0,1,0)
 {
 	far = 100;
 	near = .5f;
@@ -55,23 +57,35 @@ void e3e::Camera::tick()
 {
 	KeyRegister *kr = KeyRegister::getInstance();
 
+	e3e::Vector3d left = up.crossProduct(forward);
+	left.normalize();
+
 	bool happen = false;
 
 	if(kr->isKeyActive(KeyRegister::SLEFT)){
-		position.x -= .2;
+		position += left * .2;
 		happen = true;
 	}
 	if(kr->isKeyActive(KeyRegister::SRIGHT)){
-		position.x += .2;
+		position -= left * .2;
 		happen = true;
 	}
 
 	if(kr->isKeyActive(KeyRegister::FORWARD)){
-		position.z -= .2;
+		position += forward *.2;
 		happen = true;
 	}
 	if(kr->isKeyActive(KeyRegister::BACKWARD)){
-		position.z += .2;
+		position -= forward *.2;
+		happen = true;
+	}
+
+	if(kr->isKeyActive(KeyRegister::JUMP)){
+		position += up *.2;
+		happen = true;
+	}
+	if(kr->isKeyActive(KeyRegister::SNEAK)){
+		position -= up *.2;
 		happen = true;
 	}
 

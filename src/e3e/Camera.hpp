@@ -36,6 +36,7 @@ private:
 	double frustumScale;
 
 	Vector3d position;
+	Vector3d forward, up;
 
 	Matrix4f projectionMatrix;
 
