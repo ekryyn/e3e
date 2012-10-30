@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include "Matrix4f.hpp"
-#include "Vector3d.hpp"
-
 #include "CameraListener.hpp"
+#include "Matrix4f.hpp"
+#include "Matrix4fStack.hpp"
+#include "Vector3d.hpp"
 
 namespace e3e
 {
@@ -24,6 +24,7 @@ public:
 	void tick();
 
 	void addListener(CameraListener *l){ listeners.push_back(l); }
+	void lookAt(Matrix4fStack *stack, const Vector3d &targetPoint);
 
 private:
 	void computeProjection();
@@ -35,8 +36,8 @@ private:
 	double fovy;
 	double frustumScale;
 
+
 	Vector3d position;
-	Vector3d forward, up;
 
 	Matrix4f projectionMatrix;
 

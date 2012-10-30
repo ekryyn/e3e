@@ -8,14 +8,12 @@
 e3e::Camera::Camera(double aspect, double fovy) :
 	aspect(aspect),
 	fovy(fovy),
-	frustumScale(1.0f),
-	forward(0,0,-1),
-	up(0,1,0)
+	frustumScale(1.0f)
 {
 	far = 100;
 	near = .5f;
 
-	position.x = -6;
+	position.z = 3;
 
 	computeProjection();
 }
@@ -38,58 +36,65 @@ void e3e::Camera::zoomIn()
 }
 
 e3e::Matrix4f e3e::Camera::getProjectionMatrix() const
-{	e3e::Matrix4f translation = e3e::Matrix4f::translation(-position.x, -position.y, -position.z);
-	e3e::Matrix4f temp(projectionMatrix);
-	temp *= translation;
-	return temp;
+{
+	return projectionMatrix;
 }
 
-void e3e::Camera::signalUpdate()
+void e3e::Camera::lookAt(e3e::Matrix4fStack *stack, const Vector3d &targetPoint)
 {
-	std::vector<CameraListener*>::iterator it;
-	for(it = listeners.begin(); it != listeners.end(); it++)
-	{
-		(*it)->cameraUpdated();
-	}
+	e3e::Vector3d forward, up, left;
+	e3e::Matrix4f mat;
+
+	forward = targetPoint - position;
+
+	up = e3e::Vector3d(0,1,0); // up test
+
+	forward.normalize();
+	left = forward.crossProduct(up);
+	left.normalize();
+
+	up = left.crossProduct(forward);
+
+	mat.a1 = left.x;
+	mat.a2 = left.y;
+	mat.a3 = left.z;
+
+	mat.b1 = up.x;
+	mat.b2 = up.y;
+	mat.b3 = up.z;
+
+	mat.c1 = -forward.x;
+	mat.c2 = -forward.y;
+	mat.c3 = -forward.z;
+
+	stack->transform(mat);
+	stack->translate(-position.x, -position.y, -position.z);
+
 }
+
 
 void e3e::Camera::tick()
 {
 	KeyRegister *kr = KeyRegister::getInstance();
 
-	e3e::Vector3d left = up.crossProduct(forward);
-	left.normalize();
-
-	bool happen = false;
-
 	if(kr->isKeyActive(KeyRegister::SLEFT)){
-		position += left * .2;
-		happen = true;
+		position.x -= 0.02;
 	}
 	if(kr->isKeyActive(KeyRegister::SRIGHT)){
-		position -= left * .2;
-		happen = true;
+		position.x += 0.02;
 	}
 
 	if(kr->isKeyActive(KeyRegister::FORWARD)){
-		position += forward *.2;
-		happen = true;
+		position.z -= .2;
 	}
 	if(kr->isKeyActive(KeyRegister::BACKWARD)){
-		position -= forward *.2;
-		happen = true;
+		position.z += .2;
 	}
 
 	if(kr->isKeyActive(KeyRegister::JUMP)){
-		position += up *.2;
-		happen = true;
+		position.y += .2;
 	}
 	if(kr->isKeyActive(KeyRegister::SNEAK)){
-		position -= up *.2;
-		happen = true;
-	}
-
-	if(happen){
-		signalUpdate();
+		position.y -= .2;
 	}
 }

@@ -9,14 +9,14 @@ e3e::Scene::Scene(int w, int h) :
 	projectionShader.loadVert("shaders/projection.vert");
 	projectionShader.link();
 
-	camera = new e3e::Camera(float(w)/float(h), 70.f);
+	camera = new e3e::Camera(float(w)/float(h), 50.f);
 	camera->addListener(this);
 
 	reloadProjectionMatrix();
 
 	// add test cube
 	e3e::Node *parent = new e3e::Node(this, new e3e::Mesh());
-	parent->translate(-1.8, 0, -8);
+	parent->translate(-1, .5, 0);
 
 	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
 	child->translate(2.2, 0, 0);
@@ -79,6 +79,10 @@ void e3e::Scene::drawAxis(float scale)
 
 void e3e::Scene::render()
 {
+//	camera->tick();
+	sceneMatrixStack.push();
+	camera->lookAt(&sceneMatrixStack, e3e::Vector3d(0,0,0));
+
 	camera->tick();
 
 	glUseProgram(projectionShader.getProgram());
@@ -91,5 +95,6 @@ void e3e::Scene::render()
 	{
 		(*it)->render();
 	}
+	sceneMatrixStack.pop();
 }
 

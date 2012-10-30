@@ -15,7 +15,7 @@ void e3e::Mesh::render()
 //	offY = 0;
 //	offX = -2;
 
-	float scale = 1;
+	float scale = .5;
 
 	v1.x = -scale + offX;
 	v1.y = -scale + offY;
