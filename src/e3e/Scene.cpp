@@ -6,7 +6,8 @@
 e3e::Scene::Scene(int w, int h) :
 	w(w), h(h)
 {
-	projectionShader.loadVert("shaders/projection.vert");
+	projectionShader.loadVert("shaders/e3e.vert");
+	projectionShader.loadFrag("shaders/e3e.frag");
 	projectionShader.link();
 
 	camera = new e3e::Camera(float(w)/float(h), 50.f);
@@ -61,20 +62,36 @@ void e3e::Scene::applyMatrix()
 
 void e3e::Scene::drawAxis(float scale)
 {
-	glDisable(GL_LIGHTING);
-	glBegin(GL_LINES);
-	glColor3ub(0,0,255);
-	glVertex3f(0,0,0);
-	glVertex3f(0,0,scale);
-	glColor3ub(0,255,0);
-	glVertex3f(0,0,0);
-	glVertex3f(0,scale,0);
-	glColor3ub(255,0,0);
-	glVertex3f(0,0,0);
-	glVertex3f(scale,0,0);
-	glColor3ub(255,255,255);
-	glEnd();
-	glEnable(GL_LIGHTING);
+	float data[3*6*2]; unsigned int i=0;
+	// pos
+	data[i++] = 0; data[i++] = 0; data[i++] = 0;
+	data[i++] = scale; data[i++] = 0; data[i++] = 0;
+	data[i++] = 0; data[i++] = 0; data[i++] = 0;
+	data[i++] = 0; data[i++] = scale; data[i++] = 0;
+	data[i++] = 0; data[i++] = 0; data[i++] = 0;
+	data[i++] = 0; data[i++] = 0; data[i++] = scale;
+	//colors
+	data[i++] = 1; data[i++] = 0; data[i++] = 0;
+	data[i++] = 1; data[i++] = 0; data[i++] = 0;
+	data[i++] = 0; data[i++] = 1; data[i++] = 0;
+	data[i++] = 0; data[i++] = 1; data[i++] = 0;
+	data[i++] = 0; data[i++] = 0; data[i++] = 1;
+	data[i++] = 0; data[i++] = 0; data[i++] = 1;
+
+	// init //
+	GLuint axis;
+	glGenBuffers(1, &axis);
+	glBindBuffer(GL_ARRAY_BUFFER, axis);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(data)/2));
+	// draw//
+	glDrawArrays(GL_LINES, 0, 6);
+	// clean //
+	glDeleteBuffers(1, &axis);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void e3e::Scene::render()

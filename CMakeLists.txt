@@ -28,7 +28,8 @@ file(
 	src/e3e/*pp
 )
 
-configure_file(src/e3e/shaders/projection.vert shaders/projection.vert COPYONLY)
+configure_file(src/e3e/shaders/e3e.vert shaders/e3e.vert COPYONLY)
+configure_file(src/e3e/shaders/e3e.frag shaders/e3e.frag COPYONLY)
 
 
 add_executable(e3e-graphics ${MAIN_SOURCES})

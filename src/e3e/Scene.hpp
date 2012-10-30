@@ -53,6 +53,7 @@ private:
 	int w, h;
 
 	Matrix4fStack sceneMatrixStack;
+
 };
 
 }

@@ -51,7 +51,6 @@ void e3e::Mesh::render()
 
 	glBegin(GL_QUADS);
 
-	glColor3ub(255,0,255);
 	glVertex4d(v1.x, v1.y, v1.z, 1.f);
 	glVertex4d(v2.x, v2.y, v2.z, 1.f);
 	glVertex4d(v3.x, v3.y, v3.z, 1.f);
