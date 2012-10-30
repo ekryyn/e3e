@@ -1,6 +1,9 @@
 #include "Camera.hpp"
 #include <cmath>
 
+#include "KeyRegister.hpp"
+
+#include <iostream>
 
 e3e::Camera::Camera(double aspect, double fovy) :
 	aspect(aspect),
@@ -9,6 +12,8 @@ e3e::Camera::Camera(double aspect, double fovy) :
 {
 	far = 100;
 	near = .5f;
+
+	position.x = -6;
 
 	computeProjection();
 }
@@ -31,9 +36,46 @@ void e3e::Camera::zoomIn()
 }
 
 e3e::Matrix4f e3e::Camera::getProjectionMatrix() const
+{	e3e::Matrix4f translation = e3e::Matrix4f::translation(-position.x, -position.y, -position.z);
+	e3e::Matrix4f temp(projectionMatrix);
+	temp *= translation;
+	return temp;
+}
+
+void e3e::Camera::signalUpdate()
 {
-	return projectionMatrix;
-	e3e::Matrix4f r;
-	r.a1 = .6;
-	return r;
+	std::vector<CameraListener*>::iterator it;
+	for(it = listeners.begin(); it != listeners.end(); it++)
+	{
+		(*it)->cameraUpdated();
+	}
+}
+
+void e3e::Camera::tick()
+{
+	KeyRegister *kr = KeyRegister::getInstance();
+
+	bool happen = false;
+
+	if(kr->isKeyActive(KeyRegister::SLEFT)){
+		position.x -= .2;
+		happen = true;
+	}
+	if(kr->isKeyActive(KeyRegister::SRIGHT)){
+		position.x += .2;
+		happen = true;
+	}
+
+	if(kr->isKeyActive(KeyRegister::FORWARD)){
+		position.z -= .2;
+		happen = true;
+	}
+	if(kr->isKeyActive(KeyRegister::BACKWARD)){
+		position.z += .2;
+		happen = true;
+	}
+
+	if(happen){
+		signalUpdate();
+	}
 }

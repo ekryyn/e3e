@@ -24,6 +24,8 @@ public:
 	static Matrix4f rotationY(float r);
 	static Matrix4f rotationZ(float r);
 
+	Matrix4f& invert() const;
+
 	float* createColumnMajorArray() const;
 
 	float a1, a2, a3, a4;

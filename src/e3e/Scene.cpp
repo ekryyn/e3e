@@ -4,17 +4,19 @@
 #include "Mesh.hpp"
 
 e3e::Scene::Scene(int w, int h) :
-	camera(float(w)/float(h), 70.f),
 	w(w), h(h)
 {
 	projectionShader.loadVert("shaders/projection.vert");
 	projectionShader.link();
 
+	camera = new e3e::Camera(float(w)/float(h), 70.f);
+	camera->addListener(this);
+
 	reloadProjectionMatrix();
 
 	// add test cube
 	e3e::Node *parent = new e3e::Node(this, new e3e::Mesh());
-	parent->translate(-1, 0, -15);
+	parent->translate(-1.8, 0, -8);
 
 	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
 	child->translate(2.2, 0, 0);
@@ -29,7 +31,7 @@ void e3e::Scene::reloadProjectionMatrix()
 	GLint projectionMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
 																		  "projectionMatrix");
 
-	e3e::Matrix4f pm = camera.getProjectionMatrix();
+	e3e::Matrix4f pm = camera->getProjectionMatrix();
 
 	float *pmcm = pm.createColumnMajorArray();
 
@@ -38,6 +40,11 @@ void e3e::Scene::reloadProjectionMatrix()
 	glUseProgram(0);
 
 	delete pmcm;
+}
+
+void e3e::Scene::cameraUpdated()
+{
+	this->reloadProjectionMatrix();
 }
 
 void e3e::Scene::applyMatrix()
@@ -72,6 +79,8 @@ void e3e::Scene::drawAxis(float scale)
 
 void e3e::Scene::render()
 {
+	camera->tick();
+
 	glUseProgram(projectionShader.getProgram());
 
 	drawAxis(1.f);
@@ -81,11 +90,6 @@ void e3e::Scene::render()
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{
 		(*it)->render();
-//		(*it)->rotateXYZ(.005f, .020f, .015f);
-
-//		(*it)->rotateXYZ(0, 0, .005f);
-//		(*it).translate(.005f, 0, 0);
-//		(*it).translate(0,0,.005f);
 	}
 }
 

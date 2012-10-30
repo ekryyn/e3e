@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Matrix4f.hpp"
+#include "Movable.hpp"
 #include "Entity.hpp"
 
 namespace e3e
@@ -11,7 +12,7 @@ namespace e3e
 
 class Scene;
 
-class Node
+class Node : public Movable
 {
 public:
 	Node(Scene *scene);
@@ -23,11 +24,9 @@ public:
 
 	void addChildNode(Node *c){ children.push_back(c); }
 
-	void translate(float x, float y, float z);
-	void rotateXYZ(float x, float y, float z);
+
 
 private:
-	Matrix4f worldTransformation;
 	Scene *scene;
 	Entity *entity;
 

@@ -1,10 +1,16 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include <vector>
+
 #include "Matrix4f.hpp"
+#include "Vector3d.hpp"
+
+#include "CameraListener.hpp"
 
 namespace e3e
 {
+class Scene;
 
 class Camera
 {
@@ -15,8 +21,13 @@ public:
 
 	void zoomIn();
 
+	void tick();
+
+	void addListener(CameraListener *l){ listeners.push_back(l); }
+
 private:
 	void computeProjection();
+	void signalUpdate();
 
 	double near;
 	double far;
@@ -24,7 +35,11 @@ private:
 	double fovy;
 	double frustumScale;
 
+	Vector3d position;
+
 	Matrix4f projectionMatrix;
+
+	std::vector<CameraListener*> listeners;
 };
 
 }

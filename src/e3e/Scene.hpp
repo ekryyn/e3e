@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Camera.hpp"
+#include "CameraListener.hpp"
 #include "Matrix4f.hpp"
 #include "Matrix4fStack.hpp"
 #include "Node.hpp"
@@ -13,7 +14,7 @@
 namespace e3e
 {
 
-class Scene
+class Scene : public CameraListener
 {
 public:
 	Scene(int w, int h);
@@ -40,9 +41,11 @@ public:
 
 	void reloadProjectionMatrix();
 
+	void cameraUpdated();
+
 private:
 
-	Camera camera;
+	Camera *camera;
 	Shader projectionShader;
 
 	std::vector<Node*> sceneNodes;
