@@ -10,6 +10,11 @@ void main()
 {
 	frontColor = color;
 
+	// testing if color is defined
+	if(color == vec4(0,0,0,1)){
+		frontColor = vec4(1,0,1,1);
+	}
+
 	vec4 temp = worldTransformMatrix * position;
 	temp = projectionMatrix * temp;
 
