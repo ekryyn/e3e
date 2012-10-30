@@ -40,7 +40,7 @@ e3e::Matrix4f e3e::Camera::getProjectionMatrix() const
 	return projectionMatrix;
 }
 
-void e3e::Camera::lookAt(e3e::Matrix4fStack *stack, const Vector3d &targetPoint)
+e3e::Matrix4f e3e::Camera::lookAt(const e3e::Vector3d &targetPoint) const
 {
 	e3e::Vector3d forward, up, left;
 	e3e::Matrix4f mat;
@@ -67,9 +67,9 @@ void e3e::Camera::lookAt(e3e::Matrix4fStack *stack, const Vector3d &targetPoint)
 	mat.c2 = -forward.y;
 	mat.c3 = -forward.z;
 
-	stack->transform(mat);
-	stack->translate(-position.x, -position.y, -position.z);
+	e3e::Matrix4f translation = e3e::Matrix4f::translation(-position.x, -position.y, -position.z);
 
+	return mat * translation;
 }
 
 

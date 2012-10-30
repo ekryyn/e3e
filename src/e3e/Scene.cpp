@@ -81,7 +81,8 @@ void e3e::Scene::render()
 {
 //	camera->tick();
 	sceneMatrixStack.push();
-	camera->lookAt(&sceneMatrixStack, e3e::Vector3d(0,0,0));
+	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(0,0,0));
+	sceneMatrixStack.transform(m);
 
 	camera->tick();
 
