@@ -16,6 +16,9 @@ e3e::Mesh::Mesh() :
 
 void e3e::Mesh::init()
 {
+	/*
+	 * Initializing data arrays
+	 */
 	unsigned int k;
 	float positions[nbVertices*3];
 	float colors[nbVertices*3];
@@ -51,6 +54,14 @@ void e3e::Mesh::init()
 		}
 	}
 
+	/*
+	 * creating VAO states
+	 *
+	 * (do it twice : one for quads, one for tris)
+	 * This seems to be a lot of duplication.
+	 * In a perfect world, I'd like to have only one state;
+	 * But I do not know how to distinguish the drawing mode (TRIANGLES or QUADS)
+	 */
 	_initVao(QUADS, positions, sizeof(positions), colors, sizeof(colors), quad_indexes, sizeof(quad_indexes));
 	_initVao(TRIS, positions, sizeof(positions), colors, sizeof(colors), tri_indexes, sizeof(tri_indexes));
 
@@ -76,6 +87,11 @@ void e3e::Mesh::_initVao(FaceType type, float *positions, size_t posSize, float 
 
 void e3e::Mesh::render()
 {
+	/*
+	 * Time to render twice... Like I said, I can't find a way
+	 * to draw different types of primitives without this
+	 */
+
 	glBindVertexArray(vaos[QUADS]);
 	glDrawElements(GL_QUADS, 4*nbQuads, GL_UNSIGNED_INT, 0);
 

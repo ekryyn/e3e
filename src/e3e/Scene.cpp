@@ -17,8 +17,8 @@ e3e::Scene::Scene(int w, int h) :
 	e3e::Node *parent = new e3e::Node(this, new e3e::Cube());
 	parent->translate(-1, .5, 0);
 
-//	e3e::Node *child = new e3e::Node(this, new e3e::Cube());
-//	child->translate(2.2, 0, 0);
+	//	e3e::Node *child = new e3e::Node(this, new e3e::Cube());
+	//	child->translate(2.2, 0, 0);
 	//	parent->addChildNode(child);
 
 	sceneNodes.push_back( parent );
@@ -102,12 +102,9 @@ void e3e::Scene::drawAxis(float scale)
 
 void e3e::Scene::render()
 {
-	//	camera->tick();
 	sceneMatrixStack.push();
 	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(), e3e::Vector3d());
 	sceneMatrixStack.transform(m);
-
-	//	camera->tick();
 
 	glUseProgram(projectionShader.getProgram());
 
