@@ -1,85 +1,87 @@
 #include "Mesh.hpp"
 
-e3e::Mesh::Mesh()
+e3e::Mesh::Mesh() :
+	nbVertices(0),
+	vertices(NULL),
+	nbQuads(0),
+	quads(NULL),
+	nbTris(0),
+	tris(NULL)
 {
+	glGenBuffers(1, &bufferData);
+	glGenVertexArrays(2, vaos);
+	glGenBuffers(2, buffers);
+}
 
+void e3e::Mesh::init()
+{
+	unsigned int k;
+	float positions[nbVertices*3];
+	unsigned int quad_indexes[4*nbQuads];
+	unsigned int tri_indexes[3*nbTris];
+
+	k = 0;
+	for(unsigned int i=0; i<nbVertices; i++){
+		positions[k++] = vertices[i].x;
+		positions[k++] = vertices[i].y;
+		positions[k++] = vertices[i].z;
+	}
+
+	k = 0;
+	for(unsigned int i=0; i<nbQuads; i++){
+		if(quads[i].nbIndices == 4){
+			quad_indexes[k++] = quads[i].indices[0];
+			quad_indexes[k++] = quads[i].indices[1];
+			quad_indexes[k++] = quads[i].indices[2];
+			quad_indexes[k++] = quads[i].indices[3];
+		}
+	}
+
+	k = 0;
+	for(unsigned int i=0; i<nbTris; i++){
+		if(tris[i].nbIndices == 3){
+			tri_indexes[k++] = tris[i].indices[0];
+			tri_indexes[k++] = tris[i].indices[1];
+			tri_indexes[k++] = tris[i].indices[2];
+		}
+	}
+
+
+	glBindVertexArray(vaos[QUADS]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bufferData);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[QUADS]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indexes), quad_indexes, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindVertexArray(vaos[TRIS]);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferData);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[TRIS]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indexes), tri_indexes, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void e3e::Mesh::render()
 {
+	glBindVertexArray(vaos[QUADS]);
+	glDrawElements(GL_QUADS, 4*nbQuads, GL_UNSIGNED_INT, 0);
 
-	e3e::Vector3d v1, v2, v3, v4;
-	e3e::Vector3d v5, v6, v7, v8;
+	glBindVertexArray(vaos[TRIS]);
+	glDrawElements(GL_TRIANGLES, 3*nbTris, GL_UNSIGNED_INT, 0);
 
-	float offX, offY, offZ = 0;
-//	offY = 0;
-//	offX = -2;
+	glBindVertexArray(0);
+}
 
-	float scale = .5;
-
-	v1.x = -scale + offX;
-	v1.y = -scale + offY;
-	v1.z = -scale + offZ;
-
-	v2.x = scale + offX;
-	v2.y = -scale + offY;
-	v2.z = -scale + offZ;
-
-	v3.x = scale + offX;
-	v3.y = scale + offY;
-	v3.z = -scale + offZ;
-
-	v4.x = -scale + offX;
-	v4.y = scale + offY;
-	v4.z = -scale + offZ;
-
-	v5.x = -scale + offX;
-	v5.y = -scale + offY;
-	v5.z = scale + offZ;
-
-	v6.x = scale + offX;
-	v6.y = -scale + offY;
-	v6.z = scale + offZ;
-
-	v7.x = scale + offX;
-	v7.y = scale + offY;
-	v7.z = scale + offZ;
-
-	v8.x = -scale + offX;
-	v8.y = scale + offY;
-	v8.z = scale + offZ;
-
-	glBegin(GL_QUADS);
-
-	glVertex4d(v1.x, v1.y, v1.z, 1.f);
-	glVertex4d(v2.x, v2.y, v2.z, 1.f);
-	glVertex4d(v3.x, v3.y, v3.z, 1.f);
-	glVertex4d(v4.x, v4.y, v4.z, 1.f);
-
-	glVertex4d(v1.x, v1.y, v1.z, 1.f);
-	glVertex4d(v2.x, v2.y, v2.z, 1.f);
-	glVertex4d(v6.x, v6.y, v6.z, 1.f);
-	glVertex4d(v5.x, v5.y, v5.z, 1.f);
-
-	glVertex4d(v2.x, v2.y, v2.z, 1.f);
-	glVertex4d(v3.x, v3.y, v3.z, 1.f);
-	glVertex4d(v7.x, v7.y, v7.z, 1.f);
-	glVertex4d(v6.x, v6.y, v6.z, 1.f);
-
-	glVertex4d(v3.x, v3.y, v3.z, 1.f);
-	glVertex4d(v4.x, v4.y, v4.z, 1.f);
-	glVertex4d(v8.x, v8.y, v8.z, 1.f);
-	glVertex4d(v7.x, v7.y, v7.z, 1.f);
-
-	glVertex4d(v4.x, v4.y, v4.z, 1.f);
-	glVertex4d(v1.x, v1.y, v1.z, 1.f);
-	glVertex4d(v5.x, v5.y, v5.z, 1.f);
-	glVertex4d(v8.x, v8.y, v8.z, 1.f);
-
-	glVertex4d(v5.x, v5.y, v5.z, 1.f);
-	glVertex4d(v6.x, v6.y, v6.z, 1.f);
-	glVertex4d(v7.x, v7.y, v7.z, 1.f);
-	glVertex4d(v8.x, v8.y, v8.z, 1.f);
-
-	glEnd();
+e3e::Mesh::~Mesh()
+{
+	glDeleteBuffers(1, &bufferData);
+	glDeleteVertexArrays(2, vaos);
+	glDeleteBuffers(2, buffers);
 }

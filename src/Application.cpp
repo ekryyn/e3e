@@ -55,7 +55,7 @@ Application::Application():
 	// default scene
 	currentScene = new e3e::Scene(w,h);
 
-	camera = new FPSCamera(w/float(h), 50);
+	camera = new FPSCamera(w/float(h), 40);
 	currentScene->setCamera(camera);
 
 	EventManager::getInstance()->subscribe(camera);

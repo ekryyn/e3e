@@ -10,15 +10,51 @@
 namespace e3e
 {
 
+struct Face
+{
+	unsigned int nbIndices;
+	unsigned int *indices;
+
+	Face()
+	{
+		nbIndices = 0;
+		indices = NULL;
+	}
+
+	~Face()
+	{
+		delete [] indices;
+	}
+};
+
 class Mesh : public Entity
 {
+	typedef enum
+	{
+		QUADS = 0,
+		TRIS = 1
+	} FaceType;
+
 public:
 	Mesh();
+	~Mesh();
 
+	void init();
 	virtual void render();
 
+	unsigned int nbVertices;
+	Vector3d *vertices;
+
+	unsigned int nbQuads;
+	Face *quads;
+
+	unsigned int nbTris;
+	Face *tris;
+
 private:
-	std::vector<Vector3d> vertex;
+	GLuint bufferData;
+	GLuint vaos[2];
+	GLuint buffers[2];
 };
 
 }
