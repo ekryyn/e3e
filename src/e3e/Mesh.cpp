@@ -51,35 +51,27 @@ void e3e::Mesh::init()
 		}
 	}
 
+	_initVao(QUADS, positions, sizeof(positions), colors, sizeof(colors), quad_indexes, sizeof(quad_indexes));
+	_initVao(TRIS, positions, sizeof(positions), colors, sizeof(colors), tri_indexes, sizeof(tri_indexes));
 
-	glBindVertexArray(vaos[QUADS]);
 
+}
+
+void e3e::Mesh::_initVao(FaceType type, float *positions, size_t posSize, float *colors, size_t colSize, unsigned int *indexes, size_t indSize)
+{
+	glBindVertexArray(vaos[type]);
 	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[POSITION]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, posSize, positions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, colSize, colors, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[QUADS]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indexes), quad_indexes, GL_STATIC_DRAW);
-
-	glBindVertexArray(vaos[TRIS]);
-	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[POSITION]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[TRIS]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indexes), tri_indexes, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[type]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indSize, indexes, GL_STATIC_DRAW);
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void e3e::Mesh::render()

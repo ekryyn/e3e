@@ -25,6 +25,10 @@ struct Face
 	~Face()
 	{
 		delete [] indices;
+		//	_initVao(TRIS, positions, colors, tri_indexes);
+		//	e3e::Mesh::FaceType type = QUADS;
+		//	unsigned int *indexes = quad_indexes;
+
 	}
 };
 
@@ -60,6 +64,13 @@ public:
 	Face *tris;
 
 private:
+	void _initVao(FaceType type,
+					  float *positions,
+					  size_t posSize,
+					  float *colors,
+					  size_t colSize,
+					  unsigned int *indexes,
+					  size_t indSize);
 	GLuint dataBuffers[2];
 	GLuint vaos[2];
 	GLuint indexBuffers[2];
