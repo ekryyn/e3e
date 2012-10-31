@@ -129,6 +129,18 @@ void Application::onEvent(const sf::Event &event)
 		running = false;
 		break;
 
+	case sf::Event::KeyReleased:
+		if(event.Key.Code == sf::Key::Escape)
+		{
+			window->ShowMouseCursor(true);
+			grabMouse(false);
+		}
+		break;
+
+	case sf::Event::MouseButtonReleased:
+		grabMouse(true);
+		window->ShowMouseCursor(false);
+		break;
 	default:
 		break;
 

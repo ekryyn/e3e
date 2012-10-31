@@ -30,6 +30,9 @@ public:
 	inline int getWidth(){ return w; }
 	inline int getHeight(){ return h; }
 
+	void grabMouse(bool v){ grabbedMouse = v; }
+	bool grabbedMouse;
+
 
 private:
 	Application();
@@ -44,6 +47,7 @@ private:
 
 	e3e::Scene *currentScene;
 	FPSCamera *camera;
+
 };
 
 #endif // APPLICATION_HPP

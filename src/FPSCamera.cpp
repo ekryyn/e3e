@@ -41,7 +41,7 @@ void FPSCamera::updateVectors()
 
 void FPSCamera::onEvent(const sf::Event &event)
 {
-	if( event.Type == sf::Event::MouseMoved )
+	if( Application::getInstance()->grabbedMouse && event.Type == sf::Event::MouseMoved )
 	{
 		float ft = Application::getInstance()->frameTime() * 10;
 
