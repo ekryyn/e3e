@@ -6,6 +6,7 @@
 
 #include "Entity.hpp"
 #include "Vector3d.hpp"
+#include "Color.hpp"
 
 namespace e3e
 {
@@ -35,6 +36,12 @@ class Mesh : public Entity
 		TRIS = 1
 	} FaceType;
 
+	typedef enum
+	{
+		POSITION = 0,
+		COLOR = 1
+	} DataType;
+
 public:
 	Mesh();
 	~Mesh();
@@ -44,6 +51,7 @@ public:
 
 	unsigned int nbVertices;
 	Vector3d *vertices;
+	Color *diffuses;
 
 	unsigned int nbQuads;
 	Face *quads;
@@ -52,9 +60,9 @@ public:
 	Face *tris;
 
 private:
-	GLuint bufferData;
+	GLuint dataBuffers[2];
 	GLuint vaos[2];
-	GLuint buffers[2];
+	GLuint indexBuffers[2];
 };
 
 }

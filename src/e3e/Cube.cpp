@@ -109,6 +109,13 @@ e3e::Cube::Cube()
 
 	nbTris = 4;
 
+	// testing diffuses
+	diffuses = new e3e::Color[nbVertices];
+	for(i=0; i<nbVertices; i++){
+		diffuses[i] = (i%2==0) ? e3e::Color(1,0,0) : e3e::Color(0,0,1);
+		if(i==8) diffuses[i] = e3e::Color(0,1,0);
+	}
+
 
 	init();
 
