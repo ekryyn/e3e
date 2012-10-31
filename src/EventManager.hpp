@@ -2,7 +2,7 @@
 #define EVENTMANAGER_H
 
 #include <vector>
-#include "Singleton.hpp"
+#include "e3e/Singleton.hpp"
 #include "EventListener.hpp"
 
 class EventManager : public Singleton<EventManager>

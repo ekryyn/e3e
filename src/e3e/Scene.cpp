@@ -4,14 +4,12 @@
 #include "Mesh.hpp"
 
 e3e::Scene::Scene(int w, int h) :
+	camera(NULL),
 	w(w), h(h)
 {
 	projectionShader.loadVert("shaders/e3e.vert");
 	projectionShader.loadFrag("shaders/e3e.frag");
 	projectionShader.link();
-
-	camera = new e3e::Camera(float(w)/float(h), 50.f);
-	camera->addListener(this);
 
 	reloadProjectionMatrix();
 
@@ -21,26 +19,34 @@ e3e::Scene::Scene(int w, int h) :
 
 	e3e::Node *child = new e3e::Node(this, new e3e::Mesh());
 	child->translate(2.2, 0, 0);
-//	parent->addChildNode(child);
+	//	parent->addChildNode(child);
 
 	sceneNodes.push_back( parent );
 }
 
+void e3e::Scene::setCamera(Camera *c)
+{
+	camera = c;
+	reloadProjectionMatrix();
+}
+
 void e3e::Scene::reloadProjectionMatrix()
 {
+	if(camera)
+	{
+		GLint projectionMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
+																			  "projectionMatrix");
 
-	GLint projectionMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
-																		  "projectionMatrix");
+		e3e::Matrix4f pm = camera->getProjectionMatrix();
 
-	e3e::Matrix4f pm = camera->getProjectionMatrix();
+		float *pmcm = pm.createColumnMajorArray();
 
-	float *pmcm = pm.createColumnMajorArray();
+		glUseProgram(projectionShader.getProgram());
+		glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, pmcm);
+		glUseProgram(0);
 
-	glUseProgram(projectionShader.getProgram());
-	glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, pmcm);
-	glUseProgram(0);
-
-	delete pmcm;
+		delete pmcm;
+	}
 }
 
 void e3e::Scene::cameraUpdated()
@@ -51,7 +57,7 @@ void e3e::Scene::cameraUpdated()
 void e3e::Scene::applyMatrix()
 {
 	GLint worldTransformMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
-																 "worldTransformMatrix");
+																				"worldTransformMatrix");
 	float *tcm = sceneMatrixStack.top()->createColumnMajorArray();
 
 	glUseProgram(projectionShader.getProgram());
@@ -96,12 +102,12 @@ void e3e::Scene::drawAxis(float scale)
 
 void e3e::Scene::render()
 {
-//	camera->tick();
+	//	camera->tick();
 	sceneMatrixStack.push();
-	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(0,0,0));
+	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(), e3e::Vector3d());
 	sceneMatrixStack.transform(m);
 
-	camera->tick();
+	//	camera->tick();
 
 	glUseProgram(projectionShader.getProgram());
 

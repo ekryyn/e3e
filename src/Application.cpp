@@ -3,10 +3,11 @@
 #include <cstdio>
 #include <sstream>
 #include <cmath>
+
 #include "EventManager.hpp"
 #include "KeyRegister.hpp"
 
-e3e::Application::Application():
+Application::Application():
 	w(800), h(600),
 	_time(0),
 	lastTime(0)
@@ -53,9 +54,14 @@ e3e::Application::Application():
 
 	// default scene
 	currentScene = new e3e::Scene(w,h);
+
+	camera = new FPSCamera(w/float(h), 50);
+	currentScene->setCamera(camera);
+
+	EventManager::getInstance()->subscribe(camera);
 }
 
-void e3e::Application::run()
+void Application::run()
 {
 
 	sf::Clock frameClock, globalClock;
@@ -82,6 +88,8 @@ void e3e::Application::run()
 			glClearColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a);
 			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			camera->move();
+
 			currentScene->render();
 
 			glFlush();
@@ -102,18 +110,18 @@ void e3e::Application::run()
 }
 
 
-void e3e::Application::resetMouse()
+void Application::resetMouse()
 {
 	window->SetCursorPosition(w/2, h/2);
 }
 
 
-float e3e::Application::frameTime()
+float Application::frameTime()
 {
 	return window->GetFrameTime();
 }
 
-void e3e::Application::onEvent(const sf::Event &event)
+void Application::onEvent(const sf::Event &event)
 {
 	switch(event.Type)
 	{

@@ -1,8 +1,8 @@
-#include "e3e/Application.hpp"
+#include "Application.hpp"
 
 int main(void)
 {
-	e3e::Application *app = e3e::Application::getInstance();
+	Application *app = Application::getInstance();
 	app->run();
 
 	return 0;

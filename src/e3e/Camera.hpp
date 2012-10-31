@@ -9,7 +9,6 @@
 
 namespace e3e
 {
-class Scene;
 
 class Camera
 {
@@ -20,10 +19,7 @@ public:
 
 	void zoomIn();
 
-	void tick();
-
-	void addListener(CameraListener *l){ listeners.push_back(l); }
-	Matrix4f lookAt(const Vector3d &targetPoint) const;
+	virtual Matrix4f lookAt(const Vector3d &position, const Vector3d &targetPoint) const;
 
 private:
 	void computeProjection();
@@ -36,11 +32,7 @@ private:
 	double frustumScale;
 
 
-	Vector3d position;
-
 	Matrix4f projectionMatrix;
-
-	std::vector<CameraListener*> listeners;
 };
 
 }

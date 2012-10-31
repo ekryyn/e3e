@@ -8,13 +8,12 @@
 #include <ctime>
 #include <map>
 
-#include "Color.hpp"
+#include "e3e/Color.hpp"
+#include "e3e/Singleton.hpp"
+#include "e3e/Scene.hpp"
 #include "EventListener.hpp"
-#include "Singleton.hpp"
-#include "Scene.hpp"
+#include "FPSCamera.hpp"
 
-namespace e3e
-{
 
 class Application : public EventListener, public Singleton<Application>
 {
@@ -44,8 +43,7 @@ private:
 	e3e::Color fillColor;
 
 	e3e::Scene *currentScene;
+	FPSCamera *camera;
 };
-
-}
 
 #endif // APPLICATION_HPP

@@ -1,7 +1,6 @@
 #include "Camera.hpp"
 #include <cmath>
 
-#include "KeyRegister.hpp"
 
 #include <iostream>
 
@@ -13,7 +12,6 @@ e3e::Camera::Camera(double aspect, double fovy) :
 	far = 100;
 	near = .5f;
 
-	position.z = 3;
 
 	computeProjection();
 }
@@ -40,7 +38,7 @@ e3e::Matrix4f e3e::Camera::getProjectionMatrix() const
 	return projectionMatrix;
 }
 
-e3e::Matrix4f e3e::Camera::lookAt(const e3e::Vector3d &targetPoint) const
+e3e::Matrix4f e3e::Camera::lookAt(const e3e::Vector3d &position, const e3e::Vector3d &targetPoint) const
 {
 	e3e::Vector3d forward, up, left;
 	e3e::Matrix4f mat;
@@ -73,28 +71,28 @@ e3e::Matrix4f e3e::Camera::lookAt(const e3e::Vector3d &targetPoint) const
 }
 
 
-void e3e::Camera::tick()
-{
-	KeyRegister *kr = KeyRegister::getInstance();
+//void e3e::Camera::tick()
+//{
+//	KeyRegister *kr = KeyRegister::getInstance();
 
-	if(kr->isKeyActive(KeyRegister::SLEFT)){
-		position.x -= 0.02;
-	}
-	if(kr->isKeyActive(KeyRegister::SRIGHT)){
-		position.x += 0.02;
-	}
+//	if(kr->isKeyActive(KeyRegister::SLEFT)){
+//		position.x -= 0.02;
+//	}
+//	if(kr->isKeyActive(KeyRegister::SRIGHT)){
+//		position.x += 0.02;
+//	}
 
-	if(kr->isKeyActive(KeyRegister::FORWARD)){
-		position.z -= .2;
-	}
-	if(kr->isKeyActive(KeyRegister::BACKWARD)){
-		position.z += .2;
-	}
+//	if(kr->isKeyActive(KeyRegister::FORWARD)){
+//		position.z -= .2;
+//	}
+//	if(kr->isKeyActive(KeyRegister::BACKWARD)){
+//		position.z += .2;
+//	}
 
-	if(kr->isKeyActive(KeyRegister::JUMP)){
-		position.y += .2;
-	}
-	if(kr->isKeyActive(KeyRegister::SNEAK)){
-		position.y -= .2;
-	}
-}
+//	if(kr->isKeyActive(KeyRegister::JUMP)){
+//		position.y += .2;
+//	}
+//	if(kr->isKeyActive(KeyRegister::SNEAK)){
+//		position.y -= .2;
+//	}
+//}

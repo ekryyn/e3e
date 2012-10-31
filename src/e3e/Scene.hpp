@@ -18,6 +18,7 @@ class Scene : public CameraListener
 {
 public:
 	Scene(int w, int h);
+	void setCamera(Camera *c);
 
 	void drawAxis(float scale);
 	void render();
@@ -36,6 +37,9 @@ public:
 	inline void matrixTransform(const Matrix4f &t){
 		sceneMatrixStack.transform(t); applyMatrix();
 	}
+
+	inline void push() { sceneMatrixStack.push(); }
+	inline void pop() { sceneMatrixStack.pop(); }
 
 	void applyMatrix();
 
