@@ -2,6 +2,7 @@
 #define MESH_HPP
 
 #include <GL/glew.h>
+#include <map>
 #include <vector>
 
 #include "Entity.hpp"
@@ -23,7 +24,7 @@ struct Face
 	{
 	}
 
-	unsigned int nbIndices()
+	unsigned int nbIndices() const
 	{
 		return indices.size();
 	}
@@ -37,8 +38,9 @@ public:
 
 	typedef enum
 	{
-		NORMALS = 0,
-		GEOMETRY = 1
+		GEOMETRY = 0,
+		FACE_NORMALS = 1,
+		VERTEX_NORMAL = 2
 	} FaceType;
 
 	typedef enum
@@ -57,21 +59,36 @@ public:
 	~Mesh();
 
 	void initGeometry();
-	void initNormals(WiseType wisetype);
+	void initOpenGL();
+	void computeNormals(WiseType wisetype = CW);
+
 	virtual void render();
 
 	std::vector<Vector3d> vertices;
-	std::vector<Color> diffuses;
+	std::vector<Vector3d> vertexNormals;
+
 	std::vector<Face> faces;
+	std::vector<Vector3d> faceNormals;
+
+	std::vector<Color> diffuses;
 
 	Vector3d faceCenter(Face f);
-	Vector3d faceNormal(Face f, WiseType wisetype = CW);
+	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
 private:
 	void transformsQuadsToTris();
+
+	void initOpenGLGeometry();
+	void initOpenGLFaceNormals();
+	void initOpenGLVertexNormals();
+
 	GLuint geometryBuffers[2];
 	GLuint facenormalsBuffers[2];
-	GLuint vaos[2];
+	GLuint vertexnormalsBuffers[2];
+	GLuint vaos[3];
 	GLuint indexBuffers[2];
+
+	bool ready;
+	std::map<unsigned int, std::vector<unsigned int> > sharingMap;
 };
 
 }
