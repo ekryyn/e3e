@@ -13,23 +13,22 @@ namespace e3e
 
 struct Face
 {
-	unsigned int nbIndices;
-	unsigned int *indices;
+	std::vector<unsigned int> indices;
 
 	Face()
 	{
-		nbIndices = 0;
-		indices = NULL;
 	}
 
 	~Face()
 	{
-		delete [] indices;
-		//	_initVao(TRIS, positions, colors, tri_indexes);
-		//	e3e::Mesh::FaceType type = QUADS;
-		//	unsigned int *indexes = quad_indexes;
-
 	}
+
+	unsigned int nbIndices()
+	{
+		return indices.size();
+	}
+
+
 };
 
 class Mesh : public Entity
@@ -53,24 +52,12 @@ public:
 	void init();
 	virtual void render();
 
-	unsigned int nbVertices;
-	Vector3d *vertices;
-	Color *diffuses;
-
-	unsigned int nbQuads;
-	Face *quads;
-
-	unsigned int nbTris;
-	Face *tris;
+	std::vector<Vector3d> vertices;
+	std::vector<Color> diffuses;
+	std::vector<Face> faces;
 
 private:
-	void _initVao(FaceType type,
-					  float *positions,
-					  size_t posSize,
-					  float *colors,
-					  size_t colSize,
-					  unsigned int *indexes,
-					  size_t indSize);
+	void transformsQuadsToTris();
 	GLuint dataBuffers[2];
 	GLuint vaos[2];
 	GLuint indexBuffers[2];

@@ -45,75 +45,30 @@ e3e::Cube::Cube()
 	v9.y = 2*scale;
 	v9.z = 0;
 
-	unsigned int i, k = 0;
 
-	i = 0;
-	vertices = new e3e::Vector3d[9];
-	vertices[i++] = v1; vertices[i++] = v2; vertices[i++] = v3; vertices[i++] = v4;
-	vertices[i++] = v5; vertices[i++] = v6; vertices[i++] = v7; vertices[i++] = v8;
-	vertices[i++] = v9;
-	nbVertices = 9;
+	vertices.push_back(v1); vertices.push_back(v2); vertices.push_back(v3); vertices.push_back(v4);
+	vertices.push_back(v5); vertices.push_back(v6); vertices.push_back(v7); vertices.push_back(v8);
 
-	i = 0;
-	quads = new e3e::Face[6];
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
-	quads[i] = e3e::Face(); quads[i].indices = new unsigned int[4];
-	quads[i++].nbIndices = 4;
 
-	i=0;
-	k = 0;
-	quads[i].indices[k++] = 0; quads[i].indices[k++] = 1; quads[i].indices[k++] = 2; quads[i++].indices[k++] = 3;
-	k = 0;
-	quads[i].indices[k++] = 0; quads[i].indices[k++] = 1; quads[i].indices[k++] = 5; quads[i++].indices[k++] = 4;
-	k = 0;
-	quads[i].indices[k++] = 0; quads[i].indices[k++] = 4; quads[i].indices[k++] = 7; quads[i++].indices[k++] = 3;
-	k = 0;
-	quads[i].indices[k++] = 6; quads[i].indices[k++] = 5; quads[i].indices[k++] = 4; quads[i++].indices[k++] = 7;
-	k = 0;
-	quads[i].indices[k++] = 6; quads[i].indices[k++] = 7; quads[i].indices[k++] = 3; quads[i++].indices[k++] = 2;
-	k = 0;
-	quads[i].indices[k++] = 6; quads[i].indices[k++] = 5; quads[i].indices[k++] = 1; quads[i++].indices[k++] = 2;
+	e3e::Face f;
 
-	nbQuads = 6;
+	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
+	faces.push_back(f);
+	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(5); f.indices.push_back(4);
+	faces.push_back(f);
+	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(4); f.indices.push_back(7); f.indices.push_back(3);
+	faces.push_back(f);
+	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(5); f.indices.push_back(4); f.indices.push_back(7);
+	faces.push_back(f);
+	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(7); f.indices.push_back(3); f.indices.push_back(2);
+	faces.push_back(f);
+	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(5); f.indices.push_back(1); f.indices.push_back(2);
+	faces.push_back(f);
 
-	// testing tris
-	i=0;
-	tris = new e3e::Face[4];
-	tris[i] = e3e::Face(); tris[i].indices = new unsigned int[3];
-	tris[i++].nbIndices = 3;
-	tris[i] = e3e::Face(); tris[i].indices = new unsigned int[3];
-	tris[i++].nbIndices = 3;
-	tris[i] = e3e::Face(); tris[i].indices = new unsigned int[3];
-	tris[i++].nbIndices = 3;
-	tris[i] = e3e::Face(); tris[i].indices = new unsigned int[3];
-	tris[i++].nbIndices = 3;
-
-	i=0;
-	k = 0;
-	tris[i].indices[k++] = 8; tris[i].indices[k++] = 3; tris[i++].indices[k++] = 2;
-	k = 0;
-	tris[i].indices[k++] = 8; tris[i].indices[k++] = 3; tris[i++].indices[k++] = 7;
-	k = 0;
-	tris[i].indices[k++] = 8; tris[i].indices[k++] = 7; tris[i++].indices[k++] = 6;
-	k = 0;
-	tris[i].indices[k++] = 8; tris[i].indices[k++] = 6; tris[i++].indices[k++] = 2;
-
-	nbTris = 4;
 
 	// testing diffuses
-	diffuses = new e3e::Color[nbVertices];
-	for(i=0; i<nbVertices; i++){
-		diffuses[i] = (i%2==0) ? e3e::Color(1,0,0) : e3e::Color(0,0,1);
-		if(i==8) diffuses[i] = e3e::Color(0,1,0);
+	for(unsigned int i=0; i<vertices.size(); i++){
+		diffuses.push_back( (i%2==0) ? e3e::Color(1,0,0) : e3e::Color(0,0,1) );
 	}
 
 

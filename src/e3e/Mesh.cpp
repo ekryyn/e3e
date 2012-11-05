@@ -1,32 +1,56 @@
 #include "Mesh.hpp"
 
-e3e::Mesh::Mesh() :
-	nbVertices(0),
-	vertices(NULL),
-	diffuses(NULL),
-	nbQuads(0),
-	quads(NULL),
-	nbTris(0),
-	tris(NULL)
+e3e::Mesh::Mesh()
 {
 	glGenBuffers(2, dataBuffers);
 	glGenVertexArrays(2, vaos);
 	glGenBuffers(2, indexBuffers);
 }
 
+void e3e::Mesh::transformsQuadsToTris()
+{
+	std::vector<e3e::Face> output;
+	for(std::vector<e3e::Face>::iterator itFace = faces.begin();
+		 itFace != faces.end();
+		 itFace++)
+	{
+		e3e::Face f = *itFace;
+		if(f.nbIndices() == 3) {
+			output.push_back(f);
+		} else {
+			if(f.nbIndices() == 4) {
+				// if quad, creating 2 triangles from it
+				e3e::Face t1, t2;
+				t1.indices.push_back( f.indices[0] );
+				t1.indices.push_back( f.indices[1] );
+				t1.indices.push_back( f.indices[2] );
+				t2.indices.push_back( f.indices[2] );
+				t2.indices.push_back( f.indices[3] );
+				t2.indices.push_back( f.indices[0] );
+
+				output.push_back(t1);
+				output.push_back(t2);
+			}
+		}
+	}
+	faces = output;
+}
+
 void e3e::Mesh::init()
 {
+	// first, make sure there's no quad
+	transformsQuadsToTris();
+
 	/*
 	 * Initializing data arrays
 	 */
 	unsigned int k;
-	float positions[nbVertices*3];
-	float colors[nbVertices*3];
-	unsigned int quad_indexes[4*nbQuads];
-	unsigned int tri_indexes[3*nbTris];
+	float positions[vertices.size()*3];
+	float colors[vertices.size()*3];
+	unsigned int tri_indexes[faces.size()*3];
 
 	k = 0;
-	for(unsigned int i=0; i<nbVertices; i++){
+	for(unsigned int i=0; i<vertices.size(); i++) {
 		colors[k] = diffuses[i].r;
 		positions[k++] = vertices[i].x;
 		colors[k] = diffuses[i].g;
@@ -36,68 +60,38 @@ void e3e::Mesh::init()
 	}
 
 	k = 0;
-	for(unsigned int i=0; i<nbQuads; i++){
-		if(quads[i].nbIndices == 4){
-			quad_indexes[k++] = quads[i].indices[0];
-			quad_indexes[k++] = quads[i].indices[1];
-			quad_indexes[k++] = quads[i].indices[2];
-			quad_indexes[k++] = quads[i].indices[3];
+	for(std::vector<e3e::Face>::iterator itFace = faces.begin();
+		 itFace != faces.end();
+		 itFace++)
+	{
+		// Ensure that's a triangle
+		if( (*itFace).nbIndices() == 3 ) {
+			tri_indexes[k++] = (*itFace).indices[0];
+			tri_indexes[k++] = (*itFace).indices[1];
+			tri_indexes[k++] = (*itFace).indices[2];
 		}
 	}
 
-	k = 0;
-	for(unsigned int i=0; i<nbTris; i++){
-		if(tris[i].nbIndices == 3){
-			tri_indexes[k++] = tris[i].indices[0];
-			tri_indexes[k++] = tris[i].indices[1];
-			tri_indexes[k++] = tris[i].indices[2];
-		}
-	}
-
-	/*
-	 * creating VAO states
-	 *
-	 * (do it twice : one for quads, one for tris)
-	 * This seems to be a lot of duplication.
-	 * In a perfect world, I'd like to have only one state;
-	 * But I do not know how to distinguish the drawing mode (TRIANGLES or QUADS)
-	 */
-	_initVao(QUADS, positions, sizeof(positions), colors, sizeof(colors), quad_indexes, sizeof(quad_indexes));
-	_initVao(TRIS, positions, sizeof(positions), colors, sizeof(colors), tri_indexes, sizeof(tri_indexes));
-
-
-}
-
-void e3e::Mesh::_initVao(FaceType type, float *positions, size_t posSize, float *colors, size_t colSize, unsigned int *indexes, size_t indSize)
-{
-	glBindVertexArray(vaos[type]);
+	glBindVertexArray(vaos[TRIS]);
 	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[POSITION]);
-	glBufferData(GL_ARRAY_BUFFER, posSize, positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, colSize, colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[type]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indSize, indexes, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[TRIS]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indexes), tri_indexes, GL_STATIC_DRAW);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void e3e::Mesh::render()
 {
-	/*
-	 * Time to render twice... Like I said, I can't find a way
-	 * to draw different types of primitives without this
-	 */
-
-	glBindVertexArray(vaos[QUADS]);
-	glDrawElements(GL_QUADS, 4*nbQuads, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(vaos[TRIS]);
-	glDrawElements(GL_TRIANGLES, 3*nbTris, GL_UNSIGNED_INT, 0);
-
+	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
