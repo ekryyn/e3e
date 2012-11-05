@@ -41,12 +41,13 @@ public:
 		GEOMETRY = 0,
 		FACE_NORMALS = 1,
 		VERTEX_NORMAL = 2
-	} FaceType;
+	} VaoType;
 
 	typedef enum
 	{
 		POSITION = 0,
-		COLOR = 1
+		COLOR = 1,
+		NORMAL = 2
 	} DataType;
 
 	typedef enum
@@ -81,7 +82,7 @@ private:
 	void initOpenGLFaceNormals();
 	void initOpenGLVertexNormals();
 
-	GLuint geometryBuffers[2];
+	GLuint geometryBuffers[3];
 	GLuint facenormalsBuffers[2];
 	GLuint vertexnormalsBuffers[2];
 	GLuint vaos[3];

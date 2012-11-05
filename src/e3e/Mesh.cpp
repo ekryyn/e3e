@@ -3,7 +3,7 @@
 e3e::Mesh::Mesh() :
 	ready(false)
 {
-	glGenBuffers(2, geometryBuffers);
+	glGenBuffers(3, geometryBuffers);
 	glGenBuffers(2, facenormalsBuffers);
 	glGenBuffers(2, vertexnormalsBuffers);
 	glGenVertexArrays(3, vaos);
@@ -74,17 +74,22 @@ void e3e::Mesh::initOpenGLGeometry()
 	 */
 	unsigned int k;
 	float positions[vertices.size()*3];
+	float normals[vertices.size()*3];
 	float colors[vertices.size()*3];
 	unsigned int tri_indexes[faces.size()*3];
 
 	k = 0;
 	for(unsigned int i=0; i<vertices.size(); i++) {
 		colors[k] = diffuses[i].r;
+		normals[k] = vertexNormals[i].x;
 		positions[k++] = vertices[i].x;
 		colors[k] = diffuses[i].g;
+		normals[k] = vertexNormals[i].y;
 		positions[k++] = vertices[i].y;
 		colors[k] = diffuses[i].b;
+		normals[k] = vertexNormals[i].z;
 		positions[k++] = vertices[i].z;
+
 	}
 
 	k = 0;
@@ -101,18 +106,27 @@ void e3e::Mesh::initOpenGLGeometry()
 	}
 
 	glBindVertexArray(vaos[GEOMETRY]);
+
 	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[POSITION]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(POSITION);
 	glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[NORMAL]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(NORMAL);
+	glVertexAttribPointer(NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[COLOR]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(COLOR);
 	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[GEOMETRY]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indexes), tri_indexes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
 }
 
 void e3e::Mesh::initOpenGLFaceNormals()
@@ -144,11 +158,11 @@ void e3e::Mesh::initOpenGLFaceNormals()
 	glBindVertexArray(vaos[FACE_NORMALS]);
 	glBindBuffer(GL_ARRAY_BUFFER, facenormalsBuffers[POSITION]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normalPositions), normalPositions, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(POSITION);
 	glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, facenormalsBuffers[COLOR]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(COLOR);
 	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -184,12 +198,12 @@ void e3e::Mesh::initOpenGLVertexNormals()
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexnormalsBuffers[POSITION]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normalPositions), normalPositions, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(POSITION);
 	glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexnormalsBuffers[COLOR]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(COLOR);
 	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -290,7 +304,7 @@ void e3e::Mesh::render()
 
 e3e::Mesh::~Mesh()
 {
-	glDeleteBuffers(2, geometryBuffers);
+	glDeleteBuffers(3, geometryBuffers);
 	glDeleteBuffers(2, facenormalsBuffers);
 	glDeleteBuffers(2, vertexnormalsBuffers);
 	glDeleteVertexArrays(3, vaos);

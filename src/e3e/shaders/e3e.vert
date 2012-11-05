@@ -3,8 +3,11 @@ uniform mat4 worldTransformMatrix;
 
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec4 color;
+layout (location = 2) in vec3 normal;
 
 smooth out vec4 frontColor;
+
+smooth out vec3 normal0;
 
 void main()
 {
@@ -19,4 +22,6 @@ void main()
 	temp = projectionMatrix * temp;
 
 	gl_Position = temp;
+
+	normal0 = (worldTransformMatrix * vec4(normal, 0));
 }
