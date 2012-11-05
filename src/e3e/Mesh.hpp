@@ -75,7 +75,7 @@ public:
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
 private:
-	void transformsQuadsToTris();
+	void triangulate();
 
 	void initOpenGLGeometry();
 	void initOpenGLFaceNormals();
@@ -88,7 +88,6 @@ private:
 	GLuint indexBuffers[2];
 
 	bool ready;
-	std::map<unsigned int, std::vector<unsigned int> > sharingMap;
 };
 
 }

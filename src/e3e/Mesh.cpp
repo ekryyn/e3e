@@ -10,16 +10,17 @@ e3e::Mesh::Mesh() :
 	glGenBuffers(2, indexBuffers);
 }
 
-void e3e::Mesh::transformsQuadsToTris()
+void e3e::Mesh::triangulate()
 {
 	std::vector<e3e::Face> output;
-	for(std::vector<e3e::Face>::iterator itFace = faces.begin();
-		 itFace != faces.end();
-		 itFace++)
+	std::vector<e3e::Vector3d> outputNormals;
+	for(unsigned int fi=0; fi<faces.size(); fi++)
 	{
-		e3e::Face f = *itFace;
+		e3e::Face f = faces[fi];
+		e3e::Vector3d nn(faceNormals[fi]);
 		if(f.nbIndices() == 3) {
 			output.push_back(f);
+			outputNormals.push_back(nn);
 		} else {
 			if(f.nbIndices() == 4) {
 				// if quad, creating 2 triangles from it
@@ -33,41 +34,24 @@ void e3e::Mesh::transformsQuadsToTris()
 
 				output.push_back(t1);
 				output.push_back(t2);
+				outputNormals.push_back(nn);
+				outputNormals.push_back(nn);
 			}
 		}
 	}
 	faces = output;
+	faceNormals = outputNormals;
 }
 
 void e3e::Mesh::initGeometry()
 {
-
-	// first, make sure there's no quad //
-	transformsQuadsToTris();
-
-	// compute sharing map //
-	sharingMap.clear();
-	for(unsigned int vi=0; vi < vertices.size(); vi++)
-	{
-		// for each vertex, find faces composed by it
-		std::vector<unsigned int> list;
-		for(unsigned int fi=0; fi < faces.size(); fi++)
-		{
-			e3e::Face f(faces[fi]);
-			if(f.nbIndices() == 3){
-				if( f.indices[0] == vi ||
-					 f.indices[1] == vi ||
-					 f.indices[2] == vi)
-				{
-					list.push_back(fi);
-				}
-			}
-		}
-		sharingMap[vi] = list;
-	}
-
-	// recompute normals //
+	// compute normals //
 	computeNormals(CW);
+
+	// THEN triangulate.
+	// (interpolated vertex normals should respect the initial quads geometry)
+
+	triangulate();
 
 	ready = true;
 
@@ -222,6 +206,28 @@ void e3e::Mesh::computeNormals(WiseType wisetype)
 		faceNormals.push_back(fn);
 	}
 
+	// compute sharing map //
+	std::map<unsigned int, std::vector<unsigned int> > sharingMap;
+	for(unsigned int vi=0; vi < vertices.size(); vi++)
+	{
+		// for each vertex, find faces composed by it
+		std::vector<unsigned int> list;
+		for(unsigned int fi=0; fi < faces.size(); fi++)
+		{
+			e3e::Face f(faces[fi]);
+
+			for(unsigned int i=0; i<f.nbIndices(); i++)
+			{
+				if(f.indices[i] == vi)
+				{
+					list.push_back(fi);
+					break;
+				}
+			}
+		}
+		sharingMap[vi] = list;
+	}
+
 	vertexNormals.clear();
 	for(unsigned int vi=0; vi<vertices.size(); vi++)
 	{
@@ -231,7 +237,6 @@ void e3e::Mesh::computeNormals(WiseType wisetype)
 		{
 			vn += faceNormals[faceList[fi]];
 		}
-//		vn /= faceList.size();
 		vn.normalize();
 		vertexNormals.push_back(vn);
 	}
