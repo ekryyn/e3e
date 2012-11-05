@@ -3,7 +3,7 @@
 e3e::Cube::Cube()
 {
 	e3e::Vector3d v1, v2, v3, v4;
-	e3e::Vector3d v5, v6, v7, v8, v9;
+	e3e::Vector3d v5, v6, v7, v8;//, v9;
 
 	float offX = 0, offY = 0, offZ = 0;
 
@@ -41,9 +41,9 @@ e3e::Cube::Cube()
 	v8.y = scale + offY;
 	v8.z = scale + offZ;
 
-	v9.x = 0;
-	v9.y = 2*scale;
-	v9.z = 0;
+//	v9.x = 0;
+//	v9.y = 2*scale;
+//	v9.z = 0;
 
 
 	vertices.push_back(v1); vertices.push_back(v2); vertices.push_back(v3); vertices.push_back(v4);
@@ -54,15 +54,15 @@ e3e::Cube::Cube()
 
 	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
 	faces.push_back(f);
-	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(5); f.indices.push_back(4);
+	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(4); f.indices.push_back(5); f.indices.push_back(1);
 	faces.push_back(f);
-	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(4); f.indices.push_back(7); f.indices.push_back(3);
+	f = e3e::Face(); f.indices.push_back(0); f.indices.push_back(3); f.indices.push_back(7); f.indices.push_back(4);
 	faces.push_back(f);
 	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(5); f.indices.push_back(4); f.indices.push_back(7);
 	faces.push_back(f);
 	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(7); f.indices.push_back(3); f.indices.push_back(2);
 	faces.push_back(f);
-	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(5); f.indices.push_back(1); f.indices.push_back(2);
+	f = e3e::Face(); f.indices.push_back(5); f.indices.push_back(6); f.indices.push_back(2); f.indices.push_back(1);
 	faces.push_back(f);
 
 
@@ -72,7 +72,8 @@ e3e::Cube::Cube()
 	}
 
 
-	init();
+	initGeometry();
+	initNormals(CW);
 
 }
 

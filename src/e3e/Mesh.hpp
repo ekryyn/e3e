@@ -33,10 +33,12 @@ struct Face
 
 class Mesh : public Entity
 {
+public:
+
 	typedef enum
 	{
-		QUADS = 0,
-		TRIS = 1
+		NORMALS = 0,
+		GEOMETRY = 1
 	} FaceType;
 
 	typedef enum
@@ -45,20 +47,29 @@ class Mesh : public Entity
 		COLOR = 1
 	} DataType;
 
-public:
+	typedef enum
+	{
+		CW = 0,
+		CCW = 1
+	} WiseType;
+
 	Mesh();
 	~Mesh();
 
-	void init();
+	void initGeometry();
+	void initNormals(WiseType wisetype);
 	virtual void render();
 
 	std::vector<Vector3d> vertices;
 	std::vector<Color> diffuses;
 	std::vector<Face> faces;
 
+	Vector3d faceCenter(Face f);
+	Vector3d faceNormal(Face f, WiseType wisetype = CW);
 private:
 	void transformsQuadsToTris();
-	GLuint dataBuffers[2];
+	GLuint geometryBuffers[2];
+	GLuint facenormalsBuffers[2];
 	GLuint vaos[2];
 	GLuint indexBuffers[2];
 };
