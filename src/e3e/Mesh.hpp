@@ -60,7 +60,7 @@ public:
 	~Mesh();
 	void initGeometry();
 	void initOpenGL();
-	void computeNormals(WiseType wisetype = CW);
+	void computeNormals(bool vertex_normals, WiseType wisetype = CW);
 
 	virtual void render();
 

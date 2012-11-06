@@ -17,11 +17,15 @@ e3e::Scene::Scene(int w, int h) :
 	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::getInstance()->createUVSphere());
 	parent->translate(-2.5, .5, 0);
 
+//	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createCube(1));
+//	parent2->translate(2.5, .5, 0);
+
 	//	e3e::Node *child = new e3e::Node(this, new e3e::Cube());
 	//	child->translate(2.2, 0, 0);
 	//	parent->addChildNode(child);
 
 	sceneNodes.push_back( parent );
+//	sceneNodes.push_back( parent2 );
 }
 
 void e3e::Scene::setCamera(Camera *c)

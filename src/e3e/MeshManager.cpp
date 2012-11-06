@@ -13,13 +13,14 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 {
 	e3e::Mesh *sphere = new e3e::Mesh();
 
-	unsigned int nbSlices = 64, nbStacks = 32;
+	unsigned int nbSlices = 32, nbStacks = 16;
 	float radius = 1.f;
 	e3e::Color color(.5, .5, .5);
 
 	float tdelta = 360.f/nbSlices;
 	float pdelta = 180.f/nbStacks;
 
+	sphere->vertexNormals.clear();
 	// positionne les vertices
 	for( float phi = -90; phi <= 90; phi += pdelta )
 	{
@@ -30,6 +31,8 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 			v.y = radius * sin(phi*M_PI/180.f);
 			v.z = radius * cos(phi*M_PI/180.f) * sin(theta*M_PI/180.f);
 			sphere->vertices.push_back(v);
+			e3e::Vector3d n = v.normalize();
+			sphere->vertexNormals.push_back(n);
 			sphere->diffuses.push_back(color);
 		}
 	}
@@ -49,8 +52,10 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
-	sphere->drawFaceNormals = sphere->drawVertexNormals = false;
+	sphere->drawFaceNormals = false;
+	sphere->drawVertexNormals = false;
 
+	sphere->computeNormals(false, Mesh::CW);
 	sphere->initGeometry();
 	sphere->initOpenGL();
 
@@ -126,6 +131,10 @@ e3e::Mesh* e3e::MeshManager::createCube(float size)
 		diffuses.push_back( e3e::Color(.5,1,.5) );
 	}
 
+	cube->drawFaceNormals = false;
+	cube->drawVertexNormals = false;
+
+	cube->computeNormals(true);
 	cube->initGeometry();
 	cube->initOpenGL();
 

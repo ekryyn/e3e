@@ -48,16 +48,8 @@ void e3e::Mesh::triangulate()
 
 void e3e::Mesh::initGeometry()
 {
-	// compute normals //
-	computeNormals(CW);
-
-	// THEN triangulate.
-	// (interpolated vertex normals should respect the initial quads geometry)
-
 	triangulate();
-
 	ready = true;
-
 }
 
 void e3e::Mesh::initOpenGL()
@@ -213,7 +205,7 @@ void e3e::Mesh::initOpenGLVertexNormals()
 	glBindVertexArray(0);
 }
 
-void e3e::Mesh::computeNormals(WiseType wisetype)
+void e3e::Mesh::computeNormals(bool vertex_normals, WiseType wisetype)
 {
 	faceNormals.clear();
 
@@ -223,39 +215,42 @@ void e3e::Mesh::computeNormals(WiseType wisetype)
 		faceNormals.push_back(fn);
 	}
 
-	// compute sharing map //
-	std::map<unsigned int, std::vector<unsigned int> > sharingMap;
-	for(unsigned int vi=0; vi < vertices.size(); vi++)
+	if(vertex_normals)
 	{
-		// for each vertex, find faces composed by it
-		std::vector<unsigned int> list;
-		for(unsigned int fi=0; fi < faces.size(); fi++)
+		// compute sharing map //
+		std::map<unsigned int, std::vector<unsigned int> > sharingMap;
+		for(unsigned int vi=0; vi < vertices.size(); vi++)
 		{
-			e3e::Face f(faces[fi]);
-
-			for(unsigned int i=0; i<f.nbIndices(); i++)
+			// for each vertex, find faces composed by it
+			std::vector<unsigned int> list;
+			for(unsigned int fi=0; fi < faces.size(); fi++)
 			{
-				if(f.indices[i] == vi)
+				e3e::Face f(faces[fi]);
+
+				for(unsigned int i=0; i<f.nbIndices(); i++)
 				{
-					list.push_back(fi);
-					break;
+					if(f.indices[i] == vi)
+					{
+						list.push_back(fi);
+						break;
+					}
 				}
 			}
+			sharingMap[vi] = list;
 		}
-		sharingMap[vi] = list;
-	}
 
-	vertexNormals.clear();
-	for(unsigned int vi=0; vi<vertices.size(); vi++)
-	{
-		e3e::Vector3d vn(0,0,0);
-		std::vector<unsigned int> faceList = sharingMap[vi];
-		for(unsigned int fi=0; fi<faceList.size(); fi++)
+		vertexNormals.clear();
+		for(unsigned int vi=0; vi<vertices.size(); vi++)
 		{
-			vn += faceNormals[faceList[fi]];
+			e3e::Vector3d vn(0,0,0);
+			std::vector<unsigned int> faceList = sharingMap[vi];
+			for(unsigned int fi=0; fi<faceList.size(); fi++)
+			{
+				vn += faceNormals[faceList[fi]];
+			}
+			vn.normalize();
+			vertexNormals.push_back(vn);
 		}
-		vn.normalize();
-		vertexNormals.push_back(vn);
 	}
 }
 
