@@ -1,3 +1,4 @@
+uniform float time;
 uniform mat4 projectionMatrix;
 uniform mat4 worldTransformMatrix;
 
@@ -6,8 +7,9 @@ layout (location = 1) in vec4 color;
 layout (location = 2) in vec3 normal;
 
 smooth out vec4 frontColor;
-
 smooth out vec3 normal0;
+
+out vec3 lightDirection;
 
 void main()
 {
@@ -23,5 +25,11 @@ void main()
 
 	gl_Position = temp;
 
-	normal0 = (worldTransformMatrix * vec4(normal, 0));
+	vec4 n = (worldTransformMatrix * vec4(normal, 0));
+	normal0 = n.xyz;
+
+	lightDirection = vec3(cos(time),-.1,sin(time));
+
+	vec4 ld = worldTransformMatrix * vec4(lightDirection, 0);
+	lightDirection = ld.xyz;
 }

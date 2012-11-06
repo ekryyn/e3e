@@ -1,17 +1,31 @@
 #ifndef MESHMANAGER_HPP
 #define MESHMANAGER_HPP
 
+#include "Entity.hpp"
 #include "Mesh.hpp"
+#include "Singleton.hpp"
+
+#include <vector>
 
 namespace e3e
 {
 
-class MeshManager
+class MeshManager : public Singleton<MeshManager>
 {
+	friend class Singleton<MeshManager>;
+
 public:
+
+	typedef unsigned int MeshId;
+
 	MeshManager();
 
-	static Mesh* createCube(float size);
+	Mesh* createCube(float size);
+
+	Mesh* createUVSphere();
+
+private:
+	std::vector<Mesh*> meshes;
 };
 
 }

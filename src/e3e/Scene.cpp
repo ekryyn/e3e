@@ -14,8 +14,8 @@ e3e::Scene::Scene(int w, int h) :
 	reloadProjectionMatrix();
 
 	// add test cube
-	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::createCube(1.f));
-	parent->translate(-1, .5, 0);
+	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::getInstance()->createUVSphere());
+	parent->translate(-2.5, .5, 0);
 
 	//	e3e::Node *child = new e3e::Node(this, new e3e::Cube());
 	//	child->translate(2.2, 0, 0);
@@ -102,11 +102,15 @@ void e3e::Scene::drawAxis(float scale)
 
 void e3e::Scene::render()
 {
+	static float time = 0.f;
 	sceneMatrixStack.push();
 	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(), e3e::Vector3d());
 	sceneMatrixStack.transform(m);
 
 	glUseProgram(projectionShader.getProgram());
+
+	GLint timeUniform = glGetUniformLocation(projectionShader.getProgram(), "time");
+	glUniform1f(timeUniform, time += 0.005f);
 
 	drawAxis(1.f);
 

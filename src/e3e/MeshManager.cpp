@@ -1,10 +1,60 @@
 #include "MeshManager.hpp"
 
+#include <cmath>
+
 #include "Color.hpp"
 #include "Vector3d.hpp"
 
 e3e::MeshManager::MeshManager()
 {
+}
+
+e3e::Mesh* e3e::MeshManager::createUVSphere()
+{
+	e3e::Mesh *sphere = new e3e::Mesh();
+
+	unsigned int nbSlices = 64, nbStacks = 32;
+	float radius = 1.f;
+	e3e::Color color(.5, .5, .5);
+
+	float tdelta = 360.f/nbSlices;
+	float pdelta = 180.f/nbStacks;
+
+	// positionne les vertices
+	for( float phi = -90; phi <= 90; phi += pdelta )
+	{
+		for( float theta = 0; theta < 360; theta += tdelta)
+		{
+			e3e::Vector3d v;
+			v.x = radius * cos(phi*M_PI/180.f) * cos(theta*M_PI/180.f);
+			v.y = radius * sin(phi*M_PI/180.f);
+			v.z = radius * cos(phi*M_PI/180.f) * sin(theta*M_PI/180.f);
+			sphere->vertices.push_back(v);
+			sphere->diffuses.push_back(color);
+		}
+	}
+
+	// création des faces
+	for(unsigned int i = 0; i<nbStacks; i++)
+	{
+		for(unsigned int j = 0; j<nbSlices; j++)
+		{
+			e3e::Face f;
+			unsigned int _j = j+1; if(_j>=nbSlices) _j -= nbSlices;
+			f.indices.push_back(i*nbSlices + j);
+			f.indices.push_back(i*nbSlices + _j);
+			f.indices.push_back((i+1)*nbSlices + _j);
+			f.indices.push_back((i+1)*nbSlices + j);
+			sphere->faces.push_back(f);
+		}
+	}
+
+	sphere->drawFaceNormals = sphere->drawVertexNormals = false;
+
+	sphere->initGeometry();
+	sphere->initOpenGL();
+
+	return sphere;
 }
 
 e3e::Mesh* e3e::MeshManager::createCube(float size)
@@ -73,7 +123,7 @@ e3e::Mesh* e3e::MeshManager::createCube(float size)
 	faces.push_back(f);
 
 	for(unsigned int i=0; i<vertices.size(); i++){
-		diffuses.push_back( (i%2==0) ? e3e::Color(1,0,0) : e3e::Color(0,0,1) );
+		diffuses.push_back( e3e::Color(.5,1,.5) );
 	}
 
 	cube->initGeometry();

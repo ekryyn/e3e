@@ -8,6 +8,9 @@ e3e::Mesh::Mesh() :
 	glGenBuffers(2, vertexnormalsBuffers);
 	glGenVertexArrays(3, vaos);
 	glGenBuffers(2, indexBuffers);
+
+	drawFaceNormals = true;
+	drawVertexNormals = true;
 }
 
 void e3e::Mesh::triangulate()
@@ -293,13 +296,18 @@ void e3e::Mesh::render()
 	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	glBindVertexArray(vaos[FACE_NORMALS]);
-	glDrawArrays(GL_LINES, 0, 2*faces.size());
-	glBindVertexArray(0);
-
-	glBindVertexArray(vaos[VERTEX_NORMAL]);
-	glDrawArrays(GL_LINES, 0, 2*vertices.size());
-	glBindVertexArray(0);
+	if(drawFaceNormals)
+	{
+		glBindVertexArray(vaos[FACE_NORMALS]);
+		glDrawArrays(GL_LINES, 0, 2*faces.size());
+		glBindVertexArray(0);
+	}
+	if(drawVertexNormals)
+	{
+		glBindVertexArray(vaos[VERTEX_NORMAL]);
+		glDrawArrays(GL_LINES, 0, 2*vertices.size());
+		glBindVertexArray(0);
+	}
 }
 
 e3e::Mesh::~Mesh()

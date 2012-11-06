@@ -22,10 +22,10 @@ Application::Application():
 	settings.AntialiasingLevel = 2;
 	window = new sf::Window(sf::VideoMode(w, h, 16), "SFML OpenGL", sf::Style::Close, settings);
 
-	fillColor = e3e::Color(1,1,1);
+	fillColor = e3e::Color(.3,.3,.3);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
-	//	glEnable (GL_BLEND);
+		glEnable (GL_BLEND);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);

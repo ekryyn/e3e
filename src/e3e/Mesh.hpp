@@ -58,7 +58,6 @@ public:
 
 	Mesh();
 	~Mesh();
-
 	void initGeometry();
 	void initOpenGL();
 	void computeNormals(WiseType wisetype = CW);
@@ -75,6 +74,9 @@ public:
 
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
+
+	bool drawFaceNormals, drawVertexNormals;
+
 private:
 	void triangulate();
 
