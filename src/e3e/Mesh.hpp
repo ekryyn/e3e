@@ -56,11 +56,21 @@ public:
 		CCW = 1
 	} WiseType;
 
+	typedef struct
+	{
+		bool face_normals_ok;
+		bool vertex_normals_ok;
+		bool draw_face_normals;
+		bool draw_vertex_normals;
+	} NormalState;
+
 	Mesh();
 	~Mesh();
-	void initGeometry();
+	void initGeometry(bool interpolate_vertex_normals = true);
 	void initOpenGL();
-	void computeNormals(bool vertex_normals, WiseType wisetype = CW);
+
+	void computeFaceNormals(WiseType wisetype = CW);
+	void computeVertexNormals();
 
 	virtual void render();
 
@@ -75,8 +85,7 @@ public:
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
 
-	bool drawFaceNormals, drawVertexNormals;
-
+	NormalState normal_state;
 private:
 	void triangulate();
 

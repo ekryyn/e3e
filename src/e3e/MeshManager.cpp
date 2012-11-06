@@ -52,11 +52,7 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
-	sphere->drawFaceNormals = false;
-	sphere->drawVertexNormals = false;
-
-	sphere->computeNormals(false, Mesh::CW);
-	sphere->initGeometry();
+	sphere->initGeometry(false);
 	sphere->initOpenGL();
 
 	return sphere;
@@ -131,10 +127,6 @@ e3e::Mesh* e3e::MeshManager::createCube(float size)
 		diffuses.push_back( e3e::Color(.5,1,.5) );
 	}
 
-	cube->drawFaceNormals = false;
-	cube->drawVertexNormals = false;
-
-	cube->computeNormals(true);
 	cube->initGeometry();
 	cube->initOpenGL();
 

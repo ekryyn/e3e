@@ -9,8 +9,11 @@ e3e::Mesh::Mesh() :
 	glGenVertexArrays(3, vaos);
 	glGenBuffers(2, indexBuffers);
 
-	drawFaceNormals = true;
-	drawVertexNormals = true;
+	normal_state.draw_face_normals = false;
+	normal_state.draw_vertex_normals = false;
+	normal_state.face_normals_ok = false;
+	normal_state.vertex_normals_ok = false;
+
 }
 
 void e3e::Mesh::triangulate()
@@ -46,8 +49,12 @@ void e3e::Mesh::triangulate()
 	faceNormals = outputNormals;
 }
 
-void e3e::Mesh::initGeometry()
+void e3e::Mesh::initGeometry(bool interpolate_vertex_normals)
 {
+	computeFaceNormals();
+	if(interpolate_vertex_normals)
+		computeVertexNormals();
+
 	triangulate();
 	ready = true;
 }
@@ -57,8 +64,12 @@ void e3e::Mesh::initOpenGL()
 	if(ready)
 	{
 		initOpenGLGeometry();
-		initOpenGLFaceNormals();
-		initOpenGLVertexNormals();
+
+		if(normal_state.face_normals_ok)
+			initOpenGLFaceNormals();
+
+		if(normal_state.vertex_normals_ok)
+			initOpenGLVertexNormals();
 	}
 }
 
@@ -205,7 +216,7 @@ void e3e::Mesh::initOpenGLVertexNormals()
 	glBindVertexArray(0);
 }
 
-void e3e::Mesh::computeNormals(bool vertex_normals, WiseType wisetype)
+void e3e::Mesh::computeFaceNormals(WiseType wisetype)
 {
 	faceNormals.clear();
 
@@ -215,43 +226,53 @@ void e3e::Mesh::computeNormals(bool vertex_normals, WiseType wisetype)
 		faceNormals.push_back(fn);
 	}
 
-	if(vertex_normals)
-	{
-		// compute sharing map //
-		std::map<unsigned int, std::vector<unsigned int> > sharingMap;
-		for(unsigned int vi=0; vi < vertices.size(); vi++)
-		{
-			// for each vertex, find faces composed by it
-			std::vector<unsigned int> list;
-			for(unsigned int fi=0; fi < faces.size(); fi++)
-			{
-				e3e::Face f(faces[fi]);
+	normal_state.face_normals_ok = true;
 
-				for(unsigned int i=0; i<f.nbIndices(); i++)
+}
+
+void e3e::Mesh::computeVertexNormals()
+{
+	// here, we need face normals to interpolate vertex normals.
+	// So make sure that it has been computed
+	if( !normal_state.face_normals_ok )
+		computeFaceNormals();
+
+	// compute sharing map //
+	std::map<unsigned int, std::vector<unsigned int> > sharingMap;
+	for(unsigned int vi=0; vi < vertices.size(); vi++)
+	{
+		// for each vertex, find faces composed by it
+		std::vector<unsigned int> list;
+		for(unsigned int fi=0; fi < faces.size(); fi++)
+		{
+			e3e::Face f(faces[fi]);
+
+			for(unsigned int i=0; i<f.nbIndices(); i++)
+			{
+				if(f.indices[i] == vi)
 				{
-					if(f.indices[i] == vi)
-					{
-						list.push_back(fi);
-						break;
-					}
+					list.push_back(fi);
+					break;
 				}
 			}
-			sharingMap[vi] = list;
 		}
-
-		vertexNormals.clear();
-		for(unsigned int vi=0; vi<vertices.size(); vi++)
-		{
-			e3e::Vector3d vn(0,0,0);
-			std::vector<unsigned int> faceList = sharingMap[vi];
-			for(unsigned int fi=0; fi<faceList.size(); fi++)
-			{
-				vn += faceNormals[faceList[fi]];
-			}
-			vn.normalize();
-			vertexNormals.push_back(vn);
-		}
+		sharingMap[vi] = list;
 	}
+
+	vertexNormals.clear();
+	for(unsigned int vi=0; vi<vertices.size(); vi++)
+	{
+		e3e::Vector3d vn(0,0,0);
+		std::vector<unsigned int> faceList = sharingMap[vi];
+		for(unsigned int fi=0; fi<faceList.size(); fi++)
+		{
+			vn += faceNormals[faceList[fi]];
+		}
+		vn.normalize();
+		vertexNormals.push_back(vn);
+	}
+
+	normal_state.vertex_normals_ok = true;
 }
 
 e3e::Vector3d e3e::Mesh::faceCenter(e3e::Face f)
@@ -291,13 +312,13 @@ void e3e::Mesh::render()
 	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	if(drawFaceNormals)
+	if(normal_state.face_normals_ok && normal_state.draw_face_normals)
 	{
 		glBindVertexArray(vaos[FACE_NORMALS]);
 		glDrawArrays(GL_LINES, 0, 2*faces.size());
 		glBindVertexArray(0);
 	}
-	if(drawVertexNormals)
+	if(normal_state.vertex_normals_ok && normal_state.draw_vertex_normals)
 	{
 		glBindVertexArray(vaos[VERTEX_NORMAL]);
 		glDrawArrays(GL_LINES, 0, 2*vertices.size());
