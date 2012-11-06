@@ -1,7 +1,7 @@
 #include "Scene.hpp"
 #include "Vector3d.hpp"
 
-#include "Cube.hpp"
+#include "MeshManager.hpp"
 
 e3e::Scene::Scene(int w, int h) :
 	camera(NULL),
@@ -14,7 +14,7 @@ e3e::Scene::Scene(int w, int h) :
 	reloadProjectionMatrix();
 
 	// add test cube
-	e3e::Node *parent = new e3e::Node(this, new e3e::Cube());
+	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::createCube(1.f));
 	parent->translate(-1, .5, 0);
 
 	//	e3e::Node *child = new e3e::Node(this, new e3e::Cube());
