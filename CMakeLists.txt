@@ -30,3 +30,8 @@ add_subdirectory(src/e3e/)
 add_executable(e3e-graphics ${MAIN_SOURCES})
 
 target_link_libraries(e3e-graphics e3e ${mainLibs})
+
+
+
+configure_file(src/e3e/shaders/e3e.vert shaders/e3e.vert COPYONLY)
+configure_file(src/e3e/shaders/e3e.frag shaders/e3e.frag COPYONLY)

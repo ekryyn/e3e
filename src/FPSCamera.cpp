@@ -8,7 +8,7 @@
 
 FPSCamera::FPSCamera(double aspect, double fovy) :
 	e3e::Camera(aspect, fovy),
-	position(0,0,4),
+	position(0,-4,0),
 	phi(0),
 	theta(0)
 {
@@ -32,9 +32,9 @@ void FPSCamera::updateVectors()
 
 	// calcul du vecteur forward (basé sur phi et theta)
 	double r_temp = cos(phi*M_PI/180);
-	forward.y = sin(phi*M_PI/180);
-	forward.z = -r_temp*cos(theta*M_PI/180);
+	forward.y = r_temp*cos(theta*M_PI/180);
 	forward.x = r_temp*sin(theta*M_PI/180);
+	forward.z = sin(phi*M_PI/180);
 	forward.normalize();
 
 }
@@ -66,7 +66,7 @@ void FPSCamera::move()
 	float step = .2f;
 	KeyRegister *kr = KeyRegister::getInstance();
 
-	e3e::Vector3d up(0,1,0);
+	e3e::Vector3d up(0,0,1);
 	e3e::Vector3d left = up.crossProduct(forward);
 
 	if(kr->isKeyActive(KeyRegister::SLEFT)){

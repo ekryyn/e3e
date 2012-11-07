@@ -28,8 +28,8 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		{
 			e3e::Vector3d v;
 			v.x = radius * cos(phi*M_PI/180.f) * cos(theta*M_PI/180.f);
-			v.y = radius * sin(phi*M_PI/180.f);
-			v.z = radius * cos(phi*M_PI/180.f) * sin(theta*M_PI/180.f);
+			v.y = radius * cos(phi*M_PI/180.f) * sin(theta*M_PI/180.f);
+			v.z = radius * sin(phi*M_PI/180.f);
 			sphere->vertices.push_back(v);
 			e3e::Vector3d n = v.normalize();
 			sphere->vertexNormals.push_back(n);
@@ -52,6 +52,8 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
+	sphere->normal_state.vertex_normals_ok = true;
+//	sphere->normal_state.draw_vertex_normals = true;
 	sphere->initGeometry(false);
 	sphere->initOpenGL();
 

@@ -15,6 +15,3 @@ file(
 
 add_library(e3e SHARED ${e3e_src})
 target_link_libraries(e3e ${extlibs})
-
-configure_file(shaders/e3e.vert shaders/e3e.vert COPYONLY)
-configure_file(shaders/e3e.frag shaders/e3e.frag COPYONLY)

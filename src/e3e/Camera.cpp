@@ -45,7 +45,7 @@ e3e::Matrix4f e3e::Camera::lookAt(const e3e::Vector3d &position, const e3e::Vect
 
 	forward = targetPoint - position;
 
-	up = e3e::Vector3d(0,1,0); // up test
+	up = e3e::Vector3d(0,0,1); // up test
 
 	forward.normalize();
 	left = forward.crossProduct(up);

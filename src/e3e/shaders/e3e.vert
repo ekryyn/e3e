@@ -28,7 +28,7 @@ void main()
 	vec4 n = (worldTransformMatrix * vec4(normal, 0));
 	normal0 = n.xyz;
 
-	lightDirection = vec3(cos(time),-.1,sin(time));
+	lightDirection = vec3(cos(time), -sin(time), 0);
 
 	vec4 ld = worldTransformMatrix * vec4(lightDirection, 0);
 	lightDirection = ld.xyz;

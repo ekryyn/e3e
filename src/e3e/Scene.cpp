@@ -15,7 +15,7 @@ e3e::Scene::Scene(int w, int h) :
 
 	// add test cube
 	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::getInstance()->createUVSphere());
-	parent->translate(-2.5, .5, 0);
+	parent->translate(-2.5, 0, 0.5);
 
 //	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createCube(1));
 //	parent2->translate(2.5, .5, 0);
