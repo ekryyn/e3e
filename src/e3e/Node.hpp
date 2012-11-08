@@ -6,6 +6,7 @@
 #include "Matrix4f.hpp"
 #include "Movable.hpp"
 #include "Entity.hpp"
+#include "Shader.hpp"
 
 namespace e3e
 {
@@ -18,7 +19,7 @@ public:
 	Node(Scene *scene);
 	Node(Scene *scene, Entity *e);
 
-	void render();
+	void render(Shader *shader);
 
 	void attachEntity(Entity *e);
 

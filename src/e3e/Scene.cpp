@@ -17,6 +17,9 @@ e3e::Scene::Scene(int w, int h) :
 	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::getInstance()->createUVSphere());
 	parent->translate(-2.5, 0, 0.5);
 
+	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createPlane());
+	parent2->translate(2.5, 0, 0.5);
+
 //	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createCube(1));
 //	parent2->translate(2.5, .5, 0);
 
@@ -25,7 +28,7 @@ e3e::Scene::Scene(int w, int h) :
 	//	parent->addChildNode(child);
 
 	sceneNodes.push_back( parent );
-//	sceneNodes.push_back( parent2 );
+	sceneNodes.push_back( parent2 );
 }
 
 void e3e::Scene::setCamera(Camera *c)
@@ -38,16 +41,14 @@ void e3e::Scene::reloadProjectionMatrix()
 {
 	if(camera)
 	{
-		GLint projectionMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
-																			  "projectionMatrix");
+		GLint projectionMatrixUniform = projectionShader.getUniformLocation("projectionMatrix");
 
 		e3e::Matrix4f pm = camera->getProjectionMatrix();
 
 		float *pmcm = pm.createColumnMajorArray();
 
-		glUseProgram(projectionShader.getProgram());
+		projectionShader.use();
 		glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, pmcm);
-		glUseProgram(0);
 
 		delete pmcm;
 	}
@@ -60,11 +61,10 @@ void e3e::Scene::cameraUpdated()
 
 void e3e::Scene::applyMatrix()
 {
-	GLint worldTransformMatrixUniform = glGetUniformLocation(projectionShader.getProgram(),
-																				"worldTransformMatrix");
+	GLint worldTransformMatrixUniform = projectionShader.getUniformLocation("worldTransformMatrix");
 	float *tcm = sceneMatrixStack.top()->createColumnMajorArray();
 
-	glUseProgram(projectionShader.getProgram());
+	projectionShader.use();
 	glUniformMatrix4fv(worldTransformMatrixUniform, 1, GL_FALSE, tcm);
 
 	delete tcm;
@@ -111,13 +111,8 @@ void e3e::Scene::render()
 	e3e::Matrix4f m = camera->lookAt(e3e::Vector3d(), e3e::Vector3d());
 	sceneMatrixStack.transform(m);
 
-	glUseProgram(projectionShader.getProgram());
-
-	GLint timeUniform = glGetUniformLocation(projectionShader.getProgram(), "time");
+	GLint timeUniform = projectionShader.getUniformLocation("time");
 	glUniform1f(timeUniform, time += 0.005f);
-
-	GLint samplerUniform = glGetUniformLocation(projectionShader.getProgram(), "tex");
-	glUniform1i(samplerUniform, 0);
 
 	drawAxis(1.f);
 
@@ -125,7 +120,7 @@ void e3e::Scene::render()
 	std::vector<e3e::Node*>::iterator it;
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{
-		(*it)->render();
+		(*it)->render(&projectionShader);
 	}
 	sceneMatrixStack.pop();
 }

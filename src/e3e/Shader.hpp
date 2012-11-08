@@ -15,6 +15,9 @@ public:
 
 	GLuint getProgram();
 
+	void use(bool val=true);
+	GLuint getUniformLocation(const char *name);
+
 	void link();
 
 private:

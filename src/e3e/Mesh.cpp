@@ -319,14 +319,24 @@ e3e::Vector3d e3e::Mesh::faceNormal(const e3e::Face &f, WiseType wisetype)
 	return result;
 }
 
-void e3e::Mesh::render()
+void e3e::Mesh::render(Shader *shader)
 {
 
-	glBindTexture(GL_TEXTURE_2D, testTexture);
+//	glBindTexture(GL_TEXTURE_2D, testTexture);
 
+	if(texture.active)
+	{
+		glBindTexture(GL_TEXTURE_2D, texture.id);
+	}
+
+	shader->use();
 	glBindVertexArray(vaos[GEOMETRY]);
 	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
+
+	GLint samplerUniform = shader->getUniformLocation("tex");
+	glUniform1i(samplerUniform, 0);
 
 	if(normal_state.face_normals_ok && normal_state.draw_face_normals)
 	{

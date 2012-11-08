@@ -76,6 +76,19 @@ void Shader::link()
 	}
 }
 
+void Shader::use(bool val)
+{
+	if(val)
+		glUseProgram(getProgram());
+	else
+		glUseProgram(0);
+}
+
+GLuint Shader::getUniformLocation(const char *name)
+{
+	return glGetUniformLocation(getProgram(), name);
+}
+
 char* Shader::loadFile(const std::string &filename)
 {
 	// shader code

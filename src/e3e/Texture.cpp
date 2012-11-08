@@ -1,20 +1,11 @@
-#include "SGLUtils.hpp"
-//#include <SFML/Graphics.hpp>
+#include "Texture.hpp"
 
-//GLuint SGLUtils::loadTexture(const char *filename)
-//{
-//	sf::Image *pIm = new sf::Image();
-//	pIm->LoadFromFile(filename);
-//	GLuint tmp;
-//	glGenTextures(1, &tmp);
-//	glBindTexture(GL_TEXTURE_2D, tmp);
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-//	gluBuild2DMipmaps(GL_TEXTURE_2D,GL_RGBA,pIm->GetWidth(),pIm->GetHeight(),GL_RGBA,GL_UNSIGNED_BYTE,pIm->GetPixelsPtr());
-//	return tmp;
-//}
+e3e::Texture::Texture() :
+	active(false)
+{
+}
 
-GLuint SGLUtils::loadTexture(const char *filename, bool useMipMap)
+void e3e::Texture::loadTexture(const char *filename, bool useMipMap)
 {
 	GLuint glID;
 	SDL_Surface * picture_surface = NULL;
@@ -24,7 +15,7 @@ GLuint SGLUtils::loadTexture(const char *filename, bool useMipMap)
 
 	picture_surface = IMG_Load(filename);
 	if (picture_surface == NULL)
-		return 0;
+		this->id = 0;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -82,10 +73,11 @@ GLuint SGLUtils::loadTexture(const char *filename, bool useMipMap)
 	SDL_FreeSurface(gl_surface);
 	SDL_FreeSurface(picture_surface);
 
-	return glID;
+	this->id = glID;
+	this->active = true;
 }
 
-SDL_Surface * SGLUtils::flipSurface(SDL_Surface * surface)
+SDL_Surface * e3e::Texture::flipSurface(SDL_Surface * surface)
 {
 	int current_line,pitch;
 	SDL_Surface * fliped_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,

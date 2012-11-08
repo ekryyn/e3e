@@ -20,19 +20,20 @@ void e3e::Node::attachEntity(Entity *e)
 	entity = e;
 }
 
-void e3e::Node::render()
+void e3e::Node::render(Shader *shader)
 {
 	if( entity )
 	{
 		scene->matrixPush();
 		scene->matrixTransform( worldTransformation );
-		entity->render();
+
+		entity->render(shader);
 
 		std::vector<e3e::Node*>::iterator it;
 		for(it = children.begin(); it != children.end(); it++)
 		{
 			(*it)->rotateXYZ(0.015, 0, 0);
-			(*it)->render();
+			(*it)->render(shader);
 		}
 
 		scene->matrixPop();

@@ -7,8 +7,6 @@
 #include "Vector2d.hpp"
 #include "Vector3d.hpp"
 
-#include "SGLUtils.hpp"
-
 e3e::MeshManager::MeshManager()
 {
 }
@@ -61,7 +59,8 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
-	sphere->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
+//	sphere->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
+	sphere->texture.loadTexture("tex/earth.jpg");
 
 	sphere->normal_state.vertex_normals_ok = true;
 //	sphere->normal_state.draw_vertex_normals = true;
@@ -75,22 +74,29 @@ e3e::Mesh* e3e::MeshManager::createPlane()
 {
 	e3e::Mesh *plane = new Mesh();
 
-	plane->vertices.push_back( e3e::Vector3d(-1, -1, 0) );
-	plane->vertices.push_back( e3e::Vector3d(1, -1, 0) );
-	plane->vertices.push_back( e3e::Vector3d(1, 1, 0) );
 	plane->vertices.push_back( e3e::Vector3d(-1, 1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(1, 1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(1, -1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(-1, -1, 0) );
 
-	plane->uvCoords.push_back( e3e::Vector2d(0,0) );
-	plane->uvCoords.push_back( e3e::Vector2d(1,0) );
-	plane->uvCoords.push_back( e3e::Vector2d(1,1) );
 	plane->uvCoords.push_back( e3e::Vector2d(0,1) );
+	plane->uvCoords.push_back( e3e::Vector2d(1,1) );
+	plane->uvCoords.push_back( e3e::Vector2d(1,0) );
+	plane->uvCoords.push_back( e3e::Vector2d(0,0) );
+
+	plane->diffuses.push_back( e3e::Color(1,0,0) );
+	plane->diffuses.push_back( e3e::Color(1,0,0) );
+	plane->diffuses.push_back( e3e::Color(1,0,0) );
+	plane->diffuses.push_back( e3e::Color(1,0,0) );
 
 	e3e::Face f;
 	f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
 	plane->faces.push_back(f);
 
-	plane->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
+//	plane->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
+	plane->texture.loadTexture("tex/test.jpg");
 
+	plane->normal_state.draw_vertex_normals = true;
 	plane->initGeometry();
 	plane->initOpenGL();
 

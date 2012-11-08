@@ -28,11 +28,12 @@ void main(void)
 	outputColor = texture2D(tex, uvCoord0.st) * diffuseColor;
 	outputColor += texture2D(tex, uvCoord0.st) * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
 
+//	outputColor = texture2D(tex, uvCoord0.st);
+
 	if(normal0 == vec3(0,0,0))
 	{
 		outputColor = frontColor;
 	}
 //	outputColor = frontColor;
 
-//	outputColor = texture2D(tex, uvCoord0.st);
 }

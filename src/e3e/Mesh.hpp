@@ -5,10 +5,12 @@
 #include <map>
 #include <vector>
 
+#include "Color.hpp"
 #include "Entity.hpp"
+#include "Shader.hpp"
+#include "Texture.hpp"
 #include "Vector3d.hpp"
 #include "Vector2d.hpp"
-#include "Color.hpp"
 
 namespace e3e
 {
@@ -71,10 +73,12 @@ public:
 	void initGeometry(bool interpolate_vertex_normals = true);
 	void initOpenGL();
 
+	void addTexture();
+
 	void computeFaceNormals(WiseType wisetype = CW);
 	void computeVertexNormals();
 
-	virtual void render();
+	virtual void render(Shader *shader);
 
 	std::vector<Vector3d> vertices;
 	std::vector<Vector3d> vertexNormals;
@@ -85,6 +89,8 @@ public:
 	std::vector<Vector2d> uvCoords;
 
 	std::vector<Color> diffuses;
+
+	Texture texture;
 
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
@@ -106,7 +112,6 @@ private:
 	GLuint vertexnormalsBuffers[2];
 	GLuint vaos[3];
 	GLuint indexBuffers[2];
-
 
 	bool ready;
 };
