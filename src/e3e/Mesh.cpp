@@ -3,7 +3,7 @@
 e3e::Mesh::Mesh() :
 	ready(false)
 {
-	glGenBuffers(3, geometryBuffers);
+	glGenBuffers(4, geometryBuffers);
 	glGenBuffers(2, facenormalsBuffers);
 	glGenBuffers(2, vertexnormalsBuffers);
 	glGenVertexArrays(3, vaos);
@@ -82,17 +82,26 @@ void e3e::Mesh::initOpenGLGeometry()
 	float positions[vertices.size()*3];
 	float normals[vertices.size()*3];
 	float colors[vertices.size()*3];
+	float uvs[vertices.size()*2];
 	unsigned int tri_indexes[faces.size()*3];
 
 	k = 0;
-	for(unsigned int i=0; i<vertices.size(); i++) {
-		colors[k] = diffuses[i].r;
+	for(unsigned int i=0; i<vertices.size(); i++)
+	{
+		if(uvCoords.size() == vertices.size()) {
+			uvs[(i*2)] = uvCoords[i].x;
+			uvs[(i*2)+1] = uvCoords[i].y;
+		}
+		if(diffuses.size() == vertices.size()) {
+			colors[(i*3)] = diffuses[i].r;
+			colors[(i*3)+1] = diffuses[i].g;
+			colors[(i*3)+2] = diffuses[i].b;
+		}
+
 		normals[k] = vertexNormals[i].x;
 		positions[k++] = vertices[i].x;
-		colors[k] = diffuses[i].g;
 		normals[k] = vertexNormals[i].y;
 		positions[k++] = vertices[i].y;
-		colors[k] = diffuses[i].b;
 		normals[k] = vertexNormals[i].z;
 		positions[k++] = vertices[i].z;
 
@@ -127,6 +136,11 @@ void e3e::Mesh::initOpenGLGeometry()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(COLOR);
 	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[UV]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(UV);
+	glVertexAttribPointer(UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffers[GEOMETRY]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indexes), tri_indexes, GL_STATIC_DRAW);
@@ -177,7 +191,7 @@ void e3e::Mesh::initOpenGLFaceNormals()
 void e3e::Mesh::initOpenGLVertexNormals()
 {
 	unsigned int k = 0;
-	float normalScale = .3f;
+	float normalScale = .2f;
 	float normalPositions[3*vertices.size()*2];
 	float normalColors[3*vertices.size()*2];
 	for(unsigned int i=0; i<vertices.size(); i++)
@@ -308,6 +322,8 @@ e3e::Vector3d e3e::Mesh::faceNormal(const e3e::Face &f, WiseType wisetype)
 void e3e::Mesh::render()
 {
 
+	glBindTexture(GL_TEXTURE_2D, testTexture);
+
 	glBindVertexArray(vaos[GEOMETRY]);
 	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -324,11 +340,13 @@ void e3e::Mesh::render()
 		glDrawArrays(GL_LINES, 0, 2*vertices.size());
 		glBindVertexArray(0);
 	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 e3e::Mesh::~Mesh()
 {
-	glDeleteBuffers(3, geometryBuffers);
+	glDeleteBuffers(4, geometryBuffers);
 	glDeleteBuffers(2, facenormalsBuffers);
 	glDeleteBuffers(2, vertexnormalsBuffers);
 	glDeleteVertexArrays(3, vaos);

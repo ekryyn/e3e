@@ -7,6 +7,7 @@
 
 #include "Entity.hpp"
 #include "Vector3d.hpp"
+#include "Vector2d.hpp"
 #include "Color.hpp"
 
 namespace e3e
@@ -47,7 +48,8 @@ public:
 	{
 		POSITION = 0,
 		COLOR = 1,
-		NORMAL = 2
+		NORMAL = 2,
+		UV = 3
 	} DataType;
 
 	typedef enum
@@ -80,12 +82,18 @@ public:
 	std::vector<Face> faces;
 	std::vector<Vector3d> faceNormals;
 
+	std::vector<Vector2d> uvCoords;
+
 	std::vector<Color> diffuses;
 
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
 
 	NormalState normal_state;
+
+	// testing
+	GLuint testTexture;
+
 private:
 	void triangulate();
 
@@ -93,11 +101,12 @@ private:
 	void initOpenGLFaceNormals();
 	void initOpenGLVertexNormals();
 
-	GLuint geometryBuffers[3];
+	GLuint geometryBuffers[4];
 	GLuint facenormalsBuffers[2];
 	GLuint vertexnormalsBuffers[2];
 	GLuint vaos[3];
 	GLuint indexBuffers[2];
+
 
 	bool ready;
 };

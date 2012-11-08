@@ -24,6 +24,8 @@ public:
 
 	Mesh* createUVSphere();
 
+	Mesh* createPlane();
+
 private:
 	std::vector<Mesh*> meshes;
 };

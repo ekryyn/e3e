@@ -1,9 +1,13 @@
 #include "MeshManager.hpp"
 
 #include <cmath>
+#include <iostream>
 
 #include "Color.hpp"
+#include "Vector2d.hpp"
 #include "Vector3d.hpp"
+
+#include "SGLUtils.hpp"
 
 e3e::MeshManager::MeshManager()
 {
@@ -13,7 +17,7 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 {
 	e3e::Mesh *sphere = new e3e::Mesh();
 
-	unsigned int nbSlices = 32, nbStacks = 16;
+	unsigned int nbSlices = 64, nbStacks = 32;
 	float radius = 1.f;
 	e3e::Color color(.5, .5, .5);
 
@@ -24,7 +28,7 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 	// positionne les vertices
 	for( float phi = -90; phi <= 90; phi += pdelta )
 	{
-		for( float theta = 0; theta < 360; theta += tdelta)
+		for( float theta = 0; theta <= 360; theta += tdelta)
 		{
 			e3e::Vector3d v;
 			v.x = radius * cos(phi*M_PI/180.f) * cos(theta*M_PI/180.f);
@@ -33,24 +37,31 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 			sphere->vertices.push_back(v);
 			e3e::Vector3d n = v.normalize();
 			sphere->vertexNormals.push_back(n);
+
 			sphere->diffuses.push_back(color);
+
+//			std::cout << "UV  " << theta/360.f << " : " << (phi+90.f)/180.f << std::endl;
+			e3e::Vector2d uvc( theta/360.f , (phi+90.f)/180.f );
+			sphere->uvCoords.push_back( uvc );
 		}
 	}
 
 	// création des faces
 	for(unsigned int i = 0; i<nbStacks; i++)
 	{
-		for(unsigned int j = 0; j<nbSlices; j++)
+		for(unsigned int j = 0; j<=nbSlices; j++)
 		{
 			e3e::Face f;
-			unsigned int _j = j+1; if(_j>=nbSlices) _j -= nbSlices;
-			f.indices.push_back(i*nbSlices + j);
-			f.indices.push_back(i*nbSlices + _j);
-			f.indices.push_back((i+1)*nbSlices + _j);
-			f.indices.push_back((i+1)*nbSlices + j);
+			unsigned int _j = j+1; if(_j>nbSlices) _j -= nbSlices;
+			f.indices.push_back(i*(nbSlices+1) + j);
+			f.indices.push_back(i*(nbSlices+1) + _j);
+			f.indices.push_back((i+1)*(nbSlices+1) + _j);
+			f.indices.push_back((i+1)*(nbSlices+1) + j);
 			sphere->faces.push_back(f);
 		}
 	}
+
+	sphere->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
 
 	sphere->normal_state.vertex_normals_ok = true;
 //	sphere->normal_state.draw_vertex_normals = true;
@@ -58,6 +69,32 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 	sphere->initOpenGL();
 
 	return sphere;
+}
+
+e3e::Mesh* e3e::MeshManager::createPlane()
+{
+	e3e::Mesh *plane = new Mesh();
+
+	plane->vertices.push_back( e3e::Vector3d(-1, -1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(1, -1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(1, 1, 0) );
+	plane->vertices.push_back( e3e::Vector3d(-1, 1, 0) );
+
+	plane->uvCoords.push_back( e3e::Vector2d(0,0) );
+	plane->uvCoords.push_back( e3e::Vector2d(1,0) );
+	plane->uvCoords.push_back( e3e::Vector2d(1,1) );
+	plane->uvCoords.push_back( e3e::Vector2d(0,1) );
+
+	e3e::Face f;
+	f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
+	plane->faces.push_back(f);
+
+	plane->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
+
+	plane->initGeometry();
+	plane->initOpenGL();
+
+	return plane;
 }
 
 e3e::Mesh* e3e::MeshManager::createCube(float size)

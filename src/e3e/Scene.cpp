@@ -116,6 +116,9 @@ void e3e::Scene::render()
 	GLint timeUniform = glGetUniformLocation(projectionShader.getProgram(), "time");
 	glUniform1f(timeUniform, time += 0.005f);
 
+	GLint samplerUniform = glGetUniformLocation(projectionShader.getProgram(), "tex");
+	glUniform1i(samplerUniform, 0);
+
 	drawAxis(1.f);
 
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
