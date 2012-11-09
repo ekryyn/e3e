@@ -28,6 +28,7 @@ configure_file(res/test.dae res/test.dae COPYONLY)
 
 configure_file(tex/earth.jpg tex/earth.jpg COPYONLY)
 configure_file(tex/test.jpg tex/test.jpg COPYONLY)
+configure_file(tex/coucou1.png tex/coucou1.png COPYONLY)
 
 configure_file(src/e3e/shaders/e3e.vert shaders/e3e.vert COPYONLY)
 configure_file(src/e3e/shaders/e3e.frag shaders/e3e.frag COPYONLY)

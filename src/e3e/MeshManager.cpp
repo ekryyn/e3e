@@ -56,10 +56,10 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
-//	sphere->texture.loadTexture("tex/earth.jpg");
+	//	sphere->texture.loadTexture("tex/earth.jpg");
 
 	sphere->material.texture.loadTexture("tex/earth.jpg");
-//	sphere->material.textureInfluence.diffuse = 1;
+	//	sphere->material.textureInfluence.diffuse = 1;
 
 	sphere->normal_state.vertex_normals_ok = true;
 
@@ -85,7 +85,7 @@ e3e::Node* e3e::MeshManager::createNodeFromFile(const std::string &filename)
 	for (unsigned int n = 0; n<aroot->mNumChildren; n++)
 	{
 		aiNode *anode = aroot->mChildren[n];
-//		aiMatrix4x4 nTrans = aroot->mTransformation;
+		//		aiMatrix4x4 nTrans = aroot->mTransformation;
 		for(unsigned m=0; m<anode->mNumMeshes; m++)
 		{
 			e3e::Node *_node = new e3e::Node();
@@ -94,7 +94,11 @@ e3e::Node* e3e::MeshManager::createNodeFromFile(const std::string &filename)
 			unsigned int mind = anode->mMeshes[m];
 			aiMesh *amesh = ascene->mMeshes[mind];
 
-			_node->attachEntity( createMeshFromAssimp(amesh) );
+			// retrieve material information
+			unsigned int matind = amesh->mMaterialIndex;
+			aiMaterial *amaterial = ascene->mMaterials[matind];
+
+			_node->attachEntity( createMeshFromAssimp(amesh, amaterial) );
 			rootNode->addChildNode(_node);
 		}
 	}
@@ -102,14 +106,24 @@ e3e::Node* e3e::MeshManager::createNodeFromFile(const std::string &filename)
 	return rootNode;
 }
 
-e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh)
+e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh, aiMaterial *amaterial)
 {
 	e3e::Mesh *mesh = new e3e::Mesh();
+
+	mesh->material.diffuse = e3e::Color(1,1,0);
 
 	unsigned int nbFaces = amesh->mNumFaces;
 	unsigned int nbVertices = amesh->mNumVertices;
 
-	e3e::Color testDiffuse(.8, 0, 0);
+	aiString textureName;
+	amaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), textureName);
+
+	if(textureName.length > 0)
+	{
+		std::string tex_filename = "tex/";
+		tex_filename += textureName.data;
+		mesh->material.texture.loadTexture(tex_filename.c_str());
+	}
 
 	for(unsigned int vi = 0; vi<nbVertices; vi++)
 	{
@@ -118,6 +132,12 @@ e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh)
 
 		mesh->vertices.push_back( e3e::Vector3d(av.x, av.y, av.z) );
 		mesh->vertexNormals.push_back( e3e::Vector3d(an.x, an.y, an.z) );
+
+		if(amesh->mNumUVComponents[0] > 0)
+		{
+			aiVector3D auv = amesh->mTextureCoords[0][vi];
+			mesh->uvCoords.push_back( e3e::Vector2d(auv.x, auv.y) );
+		}
 	}
 
 	for(unsigned int fi = 0; fi<nbFaces; fi++)
@@ -132,7 +152,7 @@ e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh)
 	}
 
 	mesh->normal_state.vertex_normals_ok = true;
-	mesh->normal_state.draw_vertex_normals = true;
+	//	mesh->normal_state.draw_vertex_normals = true;
 	mesh->initGeometry(false);
 	mesh->initOpenGL();
 
@@ -157,9 +177,9 @@ e3e::Mesh* e3e::MeshManager::createPlane()
 	f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
 	plane->faces.push_back(f);
 
-//	plane->texture.loadTexture("tex/test.jpg");
+	//	plane->texture.loadTexture("tex/test.jpg");
 
-	plane->normal_state.draw_vertex_normals = true;
+	//	plane->normal_state.draw_vertex_normals = true;
 	plane->initGeometry();
 	plane->initOpenGL();
 

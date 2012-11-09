@@ -15,8 +15,10 @@ void e3e::Texture::loadTexture(const char *filename, bool useMipMap)
 
 	picture_surface = IMG_Load(filename);
 	if (picture_surface == NULL)
+	{
 		this->id = 0;
-
+		return;
+	}
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 	rmask = 0xff000000;

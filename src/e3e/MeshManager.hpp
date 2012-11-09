@@ -39,7 +39,7 @@ public:
 
 private:
 
-	Mesh* createMeshFromAssimp(aiMesh *amesh);
+	Mesh* createMeshFromAssimp(aiMesh *amesh, aiMaterial *amaterial);
 
 	std::vector<Mesh*> meshes;
 };
