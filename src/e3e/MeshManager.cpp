@@ -17,7 +17,6 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 
 	unsigned int nbSlices = 64, nbStacks = 32;
 	float radius = 1.f;
-	e3e::Color color(.8, 0, 0);
 
 	float tdelta = 360.f/nbSlices;
 	float pdelta = 180.f/nbStacks;
@@ -35,8 +34,6 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 			sphere->vertices.push_back(v);
 			e3e::Vector3d n = v.normalize();
 			sphere->vertexNormals.push_back(n);
-
-			sphere->diffuses.push_back(color);
 
 			//			std::cout << "UV  " << theta/360.f << " : " << (phi+90.f)/180.f << std::endl;
 			e3e::Vector2d uvc( theta/360.f , (phi+90.f)/180.f );
@@ -59,10 +56,14 @@ e3e::Mesh* e3e::MeshManager::createUVSphere()
 		}
 	}
 
-	//	sphere->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
-	sphere->texture.loadTexture("tex/earth.jpg");
+//	sphere->texture.loadTexture("tex/earth.jpg");
+
+	sphere->material.texture.loadTexture("tex/earth.jpg");
+//	sphere->material.textureInfluence.diffuse = 1;
 
 	sphere->normal_state.vertex_normals_ok = true;
+
+	sphere->material.diffuse = e3e::Color(.7,0,0);
 	//	sphere->normal_state.draw_vertex_normals = true;
 	sphere->initGeometry(false);
 	sphere->initOpenGL();
@@ -117,7 +118,6 @@ e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh)
 
 		mesh->vertices.push_back( e3e::Vector3d(av.x, av.y, av.z) );
 		mesh->vertexNormals.push_back( e3e::Vector3d(an.x, an.y, an.z) );
-		mesh->diffuses.push_back(testDiffuse);
 	}
 
 	for(unsigned int fi = 0; fi<nbFaces; fi++)
@@ -153,17 +153,11 @@ e3e::Mesh* e3e::MeshManager::createPlane()
 	plane->uvCoords.push_back( e3e::Vector2d(1,0) );
 	plane->uvCoords.push_back( e3e::Vector2d(0,0) );
 
-	plane->diffuses.push_back( e3e::Color(1,0,0) );
-	plane->diffuses.push_back( e3e::Color(1,0,0) );
-	plane->diffuses.push_back( e3e::Color(1,0,0) );
-	plane->diffuses.push_back( e3e::Color(1,0,0) );
-
 	e3e::Face f;
 	f.indices.push_back(0); f.indices.push_back(1); f.indices.push_back(2); f.indices.push_back(3);
 	plane->faces.push_back(f);
 
-	//	plane->testTexture = SGLUtils::loadTexture("tex/earth.jpg");
-	plane->texture.loadTexture("tex/test.jpg");
+//	plane->texture.loadTexture("tex/test.jpg");
 
 	plane->normal_state.draw_vertex_normals = true;
 	plane->initGeometry();
@@ -217,7 +211,6 @@ e3e::Mesh* e3e::MeshManager::createCube(float size)
 
 	std::vector<e3e::Vector3d> &vertices = cube->vertices;
 	std::vector<e3e::Face> &faces = cube->faces;
-	std::vector<e3e::Color> &diffuses = cube->diffuses;
 
 	vertices.push_back(v1); vertices.push_back(v2); vertices.push_back(v3); vertices.push_back(v4);
 	vertices.push_back(v5); vertices.push_back(v6); vertices.push_back(v7); vertices.push_back(v8);
@@ -237,9 +230,7 @@ e3e::Mesh* e3e::MeshManager::createCube(float size)
 	f = e3e::Face(); f.indices.push_back(6); f.indices.push_back(2); f.indices.push_back(1); f.indices.push_back(5);
 	faces.push_back(f);
 
-	for(unsigned int i=0; i<vertices.size(); i++){
-		diffuses.push_back( e3e::Color(.5,1,.5) );
-	}
+	cube->material.diffuse = e3e::Color(0,1,0);
 
 	cube->initGeometry();
 	cube->initOpenGL();

@@ -1,9 +1,10 @@
-smooth in vec4 frontColor;
-
 smooth in vec3 normal0;
 in vec2 uvCoord0;
 
+uniform vec4 diffuseColor;
 uniform sampler2D tex;
+uniform bool textureIsActive;
+uniform float textureDiffuseInfluence;
 
 out vec4 outputColor;
 in vec3 lightDirection0;
@@ -16,27 +17,22 @@ void main(void)
 
 	float diffuseFactor = dot( (normal0), -lightDirection0 );
 
-	vec4 diffuseColor;
+	vec4 diffuseLightColor;
 
 	if (diffuseFactor > 0) {
-		diffuseColor = lightColor * diffuseFactor;
+		diffuseLightColor = lightColor * diffuseFactor;
 	}
 	else {
-		diffuseColor = vec4(0, 0, 0, 0);
+		diffuseLightColor = vec4(0, 0, 0, 0);
 	}
 
-	outputColor = frontColor * diffuseColor;
-	outputColor += frontColor * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
-
-//	outputColor = texture2D(tex, uvCoord0.st) * diffuseColor;
-//	outputColor += texture2D(tex, uvCoord0.st) * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
-
-//	outputColor = texture2D(tex, uvCoord0.st);
-
-	if(normal0 == vec3(0,0,0))
-	{
-		outputColor = frontColor;
+	vec4 colorToApply;
+	if(textureIsActive) {
+		colorToApply += (1-textureDiffuseInfluence)*diffuseColor;
+		colorToApply += (textureDiffuseInfluence)*(texture2D(tex, uvCoord0.st));
+	} else {
+		colorToApply = diffuseColor;
 	}
-//	outputColor = frontColor;
 
+	outputColor = colorToApply * diffuseLightColor;
 }

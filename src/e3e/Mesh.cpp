@@ -3,7 +3,7 @@
 e3e::Mesh::Mesh() :
 	ready(false)
 {
-	glGenBuffers(4, geometryBuffers);
+	glGenBuffers(3, geometryBuffers);
 	glGenBuffers(2, facenormalsBuffers);
 	glGenBuffers(2, vertexnormalsBuffers);
 	glGenVertexArrays(3, vaos);
@@ -81,7 +81,7 @@ void e3e::Mesh::initOpenGLGeometry()
 	unsigned int k;
 	float positions[vertices.size()*3];
 	float normals[vertices.size()*3];
-	float colors[vertices.size()*3];
+//	float colors[vertices.size()*3];
 	float uvs[vertices.size()*2];
 	unsigned int tri_indexes[faces.size()*3];
 
@@ -92,11 +92,11 @@ void e3e::Mesh::initOpenGLGeometry()
 			uvs[(i*2)] = uvCoords[i].x;
 			uvs[(i*2)+1] = uvCoords[i].y;
 		}
-		if(diffuses.size() == vertices.size()) {
-			colors[(i*3)] = diffuses[i].r;
-			colors[(i*3)+1] = diffuses[i].g;
-			colors[(i*3)+2] = diffuses[i].b;
-		}
+//		if(diffuses.size() == vertices.size()) {
+//			colors[(i*3)] = diffuses[i].r;
+//			colors[(i*3)+1] = diffuses[i].g;
+//			colors[(i*3)+2] = diffuses[i].b;
+//		}
 
 		normals[k] = vertexNormals[i].x;
 		positions[k++] = vertices[i].x;
@@ -132,10 +132,10 @@ void e3e::Mesh::initOpenGLGeometry()
 	glEnableVertexAttribArray(NORMAL);
 	glVertexAttribPointer(NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(COLOR);
-	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
+//	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[COLOR]);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+//	glEnableVertexAttribArray(COLOR);
+//	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, geometryBuffers[UV]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
@@ -154,24 +154,24 @@ void e3e::Mesh::initOpenGLFaceNormals()
 	unsigned int k = 0;
 	float normalScale = .3f;
 	float normalPositions[3*faces.size()*2];
-	float normalColors[3*faces.size()*2];
+//	float normalColors[3*faces.size()*2];
 	for(unsigned int i=0; i<faces.size(); i++)
 	{
 		e3e::Vector3d fn = faceNormals[i];
 		e3e::Vector3d b, p;
 		b = faceCenter(faces[i]);
 		p = b + (fn*normalScale);
-		normalColors[k] = 0;
+//		normalColors[k] = 0;
 		normalPositions[k++] = b.x;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = b.y;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = b.z;
-		normalColors[k] = 0;
+//		normalColors[k] = 0;
 		normalPositions[k++] = p.x;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = p.y;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = p.z;
 	}
 
@@ -180,10 +180,10 @@ void e3e::Mesh::initOpenGLFaceNormals()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normalPositions), normalPositions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(POSITION);
 	glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, facenormalsBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(COLOR);
-	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
+//	glBindBuffer(GL_ARRAY_BUFFER, facenormalsBuffers[COLOR]);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
+//	glEnableVertexAttribArray(COLOR);
+//	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -193,24 +193,24 @@ void e3e::Mesh::initOpenGLVertexNormals()
 	unsigned int k = 0;
 	float normalScale = .2f;
 	float normalPositions[3*vertices.size()*2];
-	float normalColors[3*vertices.size()*2];
+//	float normalColors[3*vertices.size()*2];
 	for(unsigned int i=0; i<vertices.size(); i++)
 	{
 		e3e::Vector3d vn = vertexNormals[i];
 		e3e::Vector3d b, p;
 		b = vertices[i];
 		p = b + (vn*normalScale);
-		normalColors[k] = .5;
+//		normalColors[k] = .5;
 		normalPositions[k++] = b.x;
-		normalColors[k] = .5;
+//		normalColors[k] = .5;
 		normalPositions[k++] = b.y;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = b.z;
-		normalColors[k] = .5;
+//		normalColors[k] = .5;
 		normalPositions[k++] = p.x;
-		normalColors[k] = .5;
+//		normalColors[k] = .5;
 		normalPositions[k++] = p.y;
-		normalColors[k] = 1;
+//		normalColors[k] = 1;
 		normalPositions[k++] = p.z;
 	}
 
@@ -221,10 +221,10 @@ void e3e::Mesh::initOpenGLVertexNormals()
 	glEnableVertexAttribArray(POSITION);
 	glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexnormalsBuffers[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(COLOR);
-	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
+//	glBindBuffer(GL_ARRAY_BUFFER, vertexnormalsBuffers[COLOR]);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(normalColors), normalColors, GL_STATIC_DRAW);
+//	glEnableVertexAttribArray(COLOR);
+//	glVertexAttribPointer(COLOR, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -319,24 +319,40 @@ e3e::Vector3d e3e::Mesh::faceNormal(const e3e::Face &f, WiseType wisetype)
 	return result;
 }
 
+void e3e::Mesh::applyMaterial(Shader *shader)
+{
+	GLuint diffuseColorUniform = shader->getUniformLocation("diffuseColor");
+	glUniform4f(diffuseColorUniform,
+					material.diffuse.r,
+					material.diffuse.g,
+					material.diffuse.b,
+					material.diffuse.a);
+
+	GLuint samplerUniform = shader->getUniformLocation("tex");
+	glUniform1i(samplerUniform, 0);
+
+	GLuint textureInfluenceUniform = shader->getUniformLocation("textureDiffuseInfluence");
+	glUniform1f(textureInfluenceUniform, material.textureInfluence.diffuse);
+
+	GLuint textureIsActiveUniform = shader->getUniformLocation("textureIsActive");
+	glUniform1i(textureIsActiveUniform, material.texture.active);
+
+	if(material.texture.active)
+	{
+		glBindTexture(GL_TEXTURE_2D, material.texture.id);
+	}
+}
+
+
 void e3e::Mesh::render(Shader *shader)
 {
-
-//	glBindTexture(GL_TEXTURE_2D, testTexture);
-
-	if(texture.active)
-	{
-		glBindTexture(GL_TEXTURE_2D, texture.id);
-	}
-
 	shader->use();
+
+	applyMaterial(shader);
+
 	glBindVertexArray(vaos[GEOMETRY]);
 	glDrawElements(GL_TRIANGLES, 3*faces.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
-
-	GLint samplerUniform = shader->getUniformLocation("tex");
-	glUniform1i(samplerUniform, 0);
 
 	if(normal_state.face_normals_ok && normal_state.draw_face_normals)
 	{
@@ -356,7 +372,7 @@ void e3e::Mesh::render(Shader *shader)
 
 e3e::Mesh::~Mesh()
 {
-	glDeleteBuffers(4, geometryBuffers);
+	glDeleteBuffers(3, geometryBuffers);
 	glDeleteBuffers(2, facenormalsBuffers);
 	glDeleteBuffers(2, vertexnormalsBuffers);
 	glDeleteVertexArrays(3, vaos);

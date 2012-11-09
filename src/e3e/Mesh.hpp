@@ -7,8 +7,8 @@
 
 #include "Color.hpp"
 #include "Entity.hpp"
+#include "Material.hpp"
 #include "Shader.hpp"
-#include "Texture.hpp"
 #include "Vector3d.hpp"
 #include "Vector2d.hpp"
 
@@ -49,9 +49,9 @@ public:
 	typedef enum
 	{
 		POSITION = 0,
-		COLOR = 1,
-		NORMAL = 2,
-		UV = 3
+//		COLOR = 1,
+		NORMAL = 1,
+		UV = 2
 	} DataType;
 
 	typedef enum
@@ -90,15 +90,13 @@ public:
 
 	std::vector<Color> diffuses;
 
-	Texture texture;
+	Material material;
 
 	Vector3d faceCenter(Face f);
 	Vector3d faceNormal(const Face &f, WiseType wisetype = CW);
 
 	NormalState normal_state;
 
-	// testing
-	GLuint testTexture;
 
 private:
 	void triangulate();
@@ -107,7 +105,9 @@ private:
 	void initOpenGLFaceNormals();
 	void initOpenGLVertexNormals();
 
-	GLuint geometryBuffers[4];
+	void applyMaterial(Shader *shader);
+
+	GLuint geometryBuffers[3];
 	GLuint facenormalsBuffers[2];
 	GLuint vertexnormalsBuffers[2];
 	GLuint vaos[3];
