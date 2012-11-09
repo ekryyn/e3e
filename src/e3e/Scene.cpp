@@ -14,11 +14,10 @@ e3e::Scene::Scene(int w, int h) :
 	reloadProjectionMatrix();
 
 	// add test cube
-	e3e::Node *parent = new e3e::Node(this, e3e::MeshManager::getInstance()->createUVSphere());
-	parent->translate(-2.5, 0, 0.5);
+//	e3e::Node *parent = new e3e::Node(e3e::MeshManager::getInstance()->createUVSphere());
+//	parent->translate(-2.5, 0, 0.5);
 
-	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createPlane());
-	parent2->translate(2.5, 0, 0.5);
+	e3e::Node *parent = e3e::MeshManager::getInstance()->createNodeFromFile("res/test.dae");
 
 //	e3e::Node *parent2 = new e3e::Node(this, e3e::MeshManager::getInstance()->createCube(1));
 //	parent2->translate(2.5, .5, 0);
@@ -28,7 +27,7 @@ e3e::Scene::Scene(int w, int h) :
 	//	parent->addChildNode(child);
 
 	sceneNodes.push_back( parent );
-	sceneNodes.push_back( parent2 );
+//	sceneNodes.push_back( parent2 );
 }
 
 void e3e::Scene::setCamera(Camera *c)
@@ -120,7 +119,7 @@ void e3e::Scene::render()
 	std::vector<e3e::Node*>::iterator it;
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{
-		(*it)->render(&projectionShader);
+		(*it)->render(this, &projectionShader);
 	}
 	sceneMatrixStack.pop();
 }

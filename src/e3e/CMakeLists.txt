@@ -14,6 +14,12 @@ include_directories(${SDL_IMAGE_INCLUDE_DIRS})
 set(extlibs ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${SDL_IMAGE_LIBRARIES})
 
 
+set(BUILD_ASSIMP_TOOLS 0)
+set(BUILD_ASSIMP_SAMPLES 0)
+
+add_subdirectory(assimp/)
+include_directories(assimp/include/)
+
 file(
 	GLOB
 	e3e_src
@@ -21,4 +27,4 @@ file(
 )
 
 add_library(e3e SHARED ${e3e_src})
-target_link_libraries(e3e ${extlibs})
+target_link_libraries(e3e ${extlibs} assimp)

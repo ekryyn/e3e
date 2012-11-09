@@ -16,10 +16,10 @@ class Scene;
 class Node : public Movable
 {
 public:
-	Node(Scene *scene);
-	Node(Scene *scene, Entity *e);
+	Node();
+	Node(Entity *e);
 
-	void render(Shader *shader);
+	void render(Scene *scene, Shader *shader);
 
 	void attachEntity(Entity *e);
 
@@ -28,7 +28,6 @@ public:
 
 
 private:
-	Scene *scene;
 	Entity *entity;
 
 	std::vector<Node*> children;

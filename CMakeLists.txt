@@ -24,6 +24,8 @@ add_executable(e3e-graphics ${MAIN_SOURCES})
 
 target_link_libraries(e3e-graphics e3e ${mainLibs})
 
+configure_file(res/test.dae res/test.dae COPYONLY)
+
 configure_file(tex/earth.jpg tex/earth.jpg COPYONLY)
 configure_file(tex/test.jpg tex/test.jpg COPYONLY)
 

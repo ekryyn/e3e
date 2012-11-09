@@ -25,8 +25,11 @@ void main(void)
 		diffuseColor = vec4(0, 0, 0, 0);
 	}
 
-	outputColor = texture2D(tex, uvCoord0.st) * diffuseColor;
-	outputColor += texture2D(tex, uvCoord0.st) * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
+	outputColor = frontColor * diffuseColor;
+	outputColor += frontColor * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
+
+//	outputColor = texture2D(tex, uvCoord0.st) * diffuseColor;
+//	outputColor += texture2D(tex, uvCoord0.st) * ambiantColor * ambiantFactor; // add a bit of initial color (avoid black for now)
 
 //	outputColor = texture2D(tex, uvCoord0.st);
 

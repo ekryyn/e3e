@@ -3,8 +3,17 @@
 
 #include "Entity.hpp"
 #include "Mesh.hpp"
+#include "Node.hpp"
 #include "Singleton.hpp"
 
+
+#include <assimp/Importer.hpp>
+#include <assimp/mesh.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+
+#include <string>
 #include <vector>
 
 namespace e3e
@@ -26,7 +35,12 @@ public:
 
 	Mesh* createPlane();
 
+	Node* createNodeFromFile(const std::string &filename);
+
 private:
+
+	Mesh* createMeshFromAssimp(aiMesh *amesh);
+
 	std::vector<Mesh*> meshes;
 };
 
