@@ -1,3 +1,5 @@
+#version 330
+
 smooth in vec3 normal0;
 in vec2 uvCoord0;
 

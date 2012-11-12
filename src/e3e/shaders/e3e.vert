@@ -1,3 +1,5 @@
+#version 330
+
 uniform float time;
 uniform mat4 projectionMatrix;
 uniform mat4 worldTransformMatrix;
