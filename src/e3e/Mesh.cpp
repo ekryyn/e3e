@@ -16,6 +16,90 @@ e3e::Mesh::Mesh() :
 
 }
 
+void e3e::Mesh::subdivideQuads()
+{
+	std::vector<e3e::Face> outputFaces;
+	std::vector<e3e::Vector3d> outputNormals;
+	std::vector<e3e::Vector3d> outputVertices;
+
+	for(unsigned int fi=0; fi < faces.size(); fi++)
+	{
+		e3e::Face f = faces[fi];
+		// only quads !
+		if(f.nbIndices() == 4)
+		{
+
+			e3e::Vector3d v1, v2, v3, v4;
+
+			v1 = vertices[f.indices[0]];
+			v2 = vertices[f.indices[1]];
+			v3 = vertices[f.indices[2]];
+			v4 = vertices[f.indices[3]];
+
+			e3e::Vector3d v12, v23, v34, v14, v13;
+			v12 = (v1+v2)/2.f;
+			v23 = (v2+v3)/2.f;
+			v34 = (v3+v4)/2.f;
+			v14 = (v1+v4)/2.f;
+			v13 = (v1+v3)/2.f;
+
+			// 0 1 2
+			// 3 4 5
+			// 6 7 8
+			outputVertices.push_back(v1); outputVertices.push_back(v12); outputVertices.push_back(v2);
+			outputVertices.push_back(v14); outputVertices.push_back(v13); outputVertices.push_back(v23);
+			outputVertices.push_back(v4); outputVertices.push_back(v34); outputVertices.push_back(v3);
+
+
+			// normals
+			if(normal_state.vertex_normals_ok)
+			{
+				e3e::Vector3d n1, n2, n3, n4;
+				e3e::Vector3d n12, n23, n34, n14, n13;
+
+				n1 = vertexNormals[f.indices[0]];
+				n2 = vertexNormals[f.indices[1]];
+				n3 = vertexNormals[f.indices[2]];
+				n4 = vertexNormals[f.indices[3]];
+
+				n12 = n1+n2; n12.normalize();
+				n23 = n2+n3; n23.normalize();
+				n34 = n3+n4; n34.normalize();
+				n14 = n1+n4; n14.normalize();
+				n13 = n1+n3; n13.normalize();
+
+				outputNormals.push_back(n1); outputNormals.push_back(n12); outputNormals.push_back(n2);
+				outputNormals.push_back(n14); outputNormals.push_back(n13); outputNormals.push_back(n23);
+				outputNormals.push_back(n4); outputNormals.push_back(n34); outputNormals.push_back(n3);
+			}
+
+
+
+			unsigned int offset = fi*9;
+			e3e::Face f1, f2, f3, f4;
+
+			f1.indices.push_back(offset + 0); f1.indices.push_back(offset + 1);
+			f1.indices.push_back(offset + 4); f1.indices.push_back(offset + 3);
+
+			f2.indices.push_back(offset + 1); f2.indices.push_back(offset + 2);
+			f2.indices.push_back(offset + 5); f2.indices.push_back(offset + 4);
+
+			f3.indices.push_back(offset + 4); f3.indices.push_back(offset + 5);
+			f3.indices.push_back(offset + 8); f3.indices.push_back(offset + 7);
+
+			f4.indices.push_back(offset + 3); f4.indices.push_back(offset + 4);
+			f4.indices.push_back(offset + 7); f4.indices.push_back(offset + 6);
+
+			outputFaces.push_back(f1); outputFaces.push_back(f2);
+			outputFaces.push_back(f3); outputFaces.push_back(f4);
+		}
+	}
+
+	vertices = outputVertices;
+	faces = outputFaces;
+	vertexNormals = outputNormals;
+}
+
 void e3e::Mesh::triangulate()
 {
 	std::vector<e3e::Face> output;

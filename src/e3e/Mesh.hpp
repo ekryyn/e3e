@@ -73,6 +73,8 @@ public:
 	void initGeometry(bool interpolate_vertex_normals = true);
 	void initOpenGL();
 
+	void subdivideQuads();
+
 	void addTexture();
 
 	void computeFaceNormals(WiseType wisetype = CW);

@@ -161,7 +161,7 @@ e3e::Mesh* e3e::MeshManager::createMeshFromAssimp(aiMesh *amesh, aiMaterial *ama
 
 e3e::Mesh* e3e::MeshManager::createPlane()
 {
-	e3e::Mesh *plane = new Mesh();
+	e3e::Mesh *plane = new e3e::Mesh();
 
 	plane->vertices.push_back( e3e::Vector3d(-1, 1, 0) );
 	plane->vertices.push_back( e3e::Vector3d(1, 1, 0) );
