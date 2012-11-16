@@ -7,6 +7,10 @@
 #include "EventManager.hpp"
 #include "KeyRegister.hpp"
 
+#include "game/Terrain.hpp"
+#include "game/Map.hpp"
+#include "game/MapFileReader.hpp"
+
 Application::Application():
 	w(800), h(600),
 	_time(0),
@@ -59,6 +63,14 @@ Application::Application():
 	currentScene->setCamera(camera);
 
 	EventManager::getInstance()->subscribe(camera);
+
+	MapFileReader reader("res/map1.map");
+
+	Terrain *terrain = new Terrain();
+	terrain->initFromMap(reader.getMap());
+
+	currentScene->addNode( new e3e::Node(terrain) );
+
 }
 
 void Application::run()

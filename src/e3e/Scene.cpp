@@ -31,15 +31,20 @@ e3e::Scene::Scene(int w, int h) :
 //	e3e::Node *parent = new e3e::Node(e3e::MeshManager::getInstance()->createCube(1));
 //	sceneNodes.push_back( parent );
 
-	e3e::Node *parent2 = new e3e::Node(e3e::MeshManager::getInstance()->createUVSphere());
-	parent2->translate(2,0,0);
-	sceneNodes.push_back( parent2 );
+//	e3e::Node *parent2 = new e3e::Node(e3e::MeshManager::getInstance()->createUVSphere());
+//	parent2->translate(2,0,0);
+//	sceneNodes.push_back( parent2 );
 
 //	e3e::Node *parent3 = new e3e::Node(e3e::MeshManager::getInstance()->createCube(1));
 //	parent3->translate(2,2,0);
 //	sceneNodes.push_back( parent3 );
 
 //	sceneNodes.push_back( parent2 );
+}
+
+void e3e::Scene::addNode(e3e::Node *node)
+{
+	sceneNodes.push_back(node);
 }
 
 void e3e::Scene::setCamera(Camera *c)
@@ -127,7 +132,7 @@ void e3e::Scene::render()
 
 	drawAxis(1.f);
 
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	std::vector<e3e::Node*>::iterator it;
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{

@@ -37,4 +37,6 @@ void main(void)
 	}
 
 	outputColor = colorToApply * diffuseLightColor;
+
+//	outputColor = diffuseColor;
 }

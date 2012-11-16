@@ -47,6 +47,8 @@ public:
 
 	void cameraUpdated();
 
+	void addNode(Node *node);
+
 private:
 
 	Camera *camera;
