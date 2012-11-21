@@ -5,20 +5,14 @@ e3e::Texture::Texture() :
 {
 }
 
-void e3e::Texture::loadTexture(const char *filename, bool useMipMap)
+void e3e::Texture::loadTexture(SDL_Surface *surface, bool useMipMap)
 {
 	GLuint glID;
-	SDL_Surface * picture_surface = NULL;
+	SDL_Surface * picture_surface = surface;
 	SDL_Surface *gl_surface = NULL;
 	SDL_Surface * gl_fliped_surface = NULL;
 	Uint32 rmask, gmask, bmask, amask;
 
-	picture_surface = IMG_Load(filename);
-	if (picture_surface == NULL)
-	{
-		this->id = 0;
-		return;
-	}
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 	rmask = 0xff000000;
@@ -73,10 +67,26 @@ void e3e::Texture::loadTexture(const char *filename, bool useMipMap)
 
 	SDL_FreeSurface(gl_fliped_surface);
 	SDL_FreeSurface(gl_surface);
-	SDL_FreeSurface(picture_surface);
 
 	this->id = glID;
 	this->active = true;
+}
+
+void e3e::Texture::loadTexture(const char *filename, bool useMipMap)
+{
+	SDL_Surface * picture_surface = NULL;
+
+	picture_surface = IMG_Load(filename);
+	if (picture_surface == NULL)
+	{
+		this->id = 0;
+		return;
+	}
+
+	this->loadTexture(picture_surface, useMipMap);
+
+	SDL_FreeSurface(picture_surface);
+
 }
 
 SDL_Surface * e3e::Texture::flipSurface(SDL_Surface * surface)

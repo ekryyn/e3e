@@ -132,7 +132,8 @@ void e3e::Scene::render()
 
 	drawAxis(1.f);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	std::vector<e3e::Node*>::iterator it;
 	for(it = sceneNodes.begin(); it != sceneNodes.end(); it++)
 	{

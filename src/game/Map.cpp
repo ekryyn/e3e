@@ -28,7 +28,7 @@ void Map::setVisited(unsigned int i, unsigned int j, bool val)
 
 Map::Cell Map::nextPathCellFrom(Cell current)
 {
-	Cell left = current, top = current, right = current, bottom = current;
+	Cell left = current, top = current, right =current, bottom = current;
 	if(current.posI > 0)
 		top.posI -= 1;
 	if(current.posI < height-1)
@@ -55,7 +55,7 @@ Map::Cell Map::nextPathCellFrom(Cell current)
 
 }
 
-Map::Cell Map::getCell(unsigned int i, unsigned int j)
+Map::Cell Map::getCell(unsigned int i, unsigned int j) const
 {
 	return cells[i][j];
 }

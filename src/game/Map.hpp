@@ -34,7 +34,7 @@ public:
 	bool isVisited(unsigned int i, unsigned int j);
 
 
-	Cell getCell(unsigned int i, unsigned int j);
+	Cell getCell(unsigned int i, unsigned int j) const;
 
 	unsigned int width, height;
 

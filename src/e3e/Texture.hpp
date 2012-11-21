@@ -13,7 +13,9 @@ class Texture
 public:
 	Texture();
 
-	void loadTexture(const char * filename,bool useMipMap=true);
+	void loadTexture(const char * filename, bool useMipMap=true);
+	void loadTexture(SDL_Surface *surface, bool useMipMap=true);
+
 	static SDL_Surface* flipSurface(SDL_Surface * surface);
 
 	bool active;

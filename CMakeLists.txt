@@ -40,3 +40,6 @@ configure_file(src/e3e/shaders/e3e.vert shaders/e3e.vert COPYONLY)
 configure_file(src/e3e/shaders/e3e.frag shaders/e3e.frag COPYONLY)
 
 configure_file(res/map1.map res/map1.map COPYONLY)
+
+configure_file(res/green.png res/green.png COPYONLY)
+configure_file(res/yellow.png res/yellow.png COPYONLY)
