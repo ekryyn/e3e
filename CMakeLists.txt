@@ -8,6 +8,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 find_package(SFML 1.6 REQUIRED system window graphics)
 
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(SDL sdl REQUIRED)
+pkg_check_modules(SDL_IMAGE SDL_image REQUIRED)
+
 include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
 include_directories(${SDL_INCLUDE_DIRS})
