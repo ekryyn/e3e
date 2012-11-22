@@ -21,6 +21,7 @@ void e3e::Mesh::subdivideQuads()
 	std::vector<e3e::Face> outputFaces;
 	std::vector<e3e::Vector3d> outputNormals;
 	std::vector<e3e::Vector3d> outputVertices;
+	std::vector<e3e::Vector2d> outputUv;
 
 	for(unsigned int fi=0; fi < faces.size(); fi++)
 	{
@@ -43,12 +44,30 @@ void e3e::Mesh::subdivideQuads()
 			v14 = (v1+v4)/2.f;
 			v13 = (v1+v3)/2.f;
 
+
+			e3e::Vector2d uv1, uv2, uv3, uv4;
+			uv1 = uvCoords[f.indices[0]];
+			uv2 = uvCoords[f.indices[1]];
+			uv3 = uvCoords[f.indices[2]];
+			uv4 = uvCoords[f.indices[3]];
+
+			e3e::Vector2d uv12, uv23, uv34, uv14, uv13;
+			uv12 = (uv1+uv2)/2.f;
+			uv23 = (uv2+uv3)/2.f;
+			uv34 = (uv3+uv4)/2.f;
+			uv14 = (uv1+uv4)/2.f;
+			uv13 = (uv1+uv3)/2.f;
+
 			// 0 1 2
 			// 3 4 5
 			// 6 7 8
 			outputVertices.push_back(v1); outputVertices.push_back(v12); outputVertices.push_back(v2);
 			outputVertices.push_back(v14); outputVertices.push_back(v13); outputVertices.push_back(v23);
 			outputVertices.push_back(v4); outputVertices.push_back(v34); outputVertices.push_back(v3);
+
+			outputUv.push_back(uv1); outputUv.push_back(uv12); outputUv.push_back(uv2);
+			outputUv.push_back(uv14); outputUv.push_back(uv13); outputUv.push_back(uv23);
+			outputUv.push_back(uv4); outputUv.push_back(uv34); outputUv.push_back(uv3);
 
 
 			// normals
@@ -98,6 +117,7 @@ void e3e::Mesh::subdivideQuads()
 	vertices = outputVertices;
 	faces = outputFaces;
 	vertexNormals = outputNormals;
+	uvCoords = outputUv;
 }
 
 void e3e::Mesh::triangulate()

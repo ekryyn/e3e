@@ -14,12 +14,25 @@ public:
 	double x;
 	double y;
 
+	Vector2d & operator= (const Vector2d & v);
+
+	Vector2d & operator+= (const Vector2d & v);
+	Vector2d operator+ (const Vector2d & v) const;
+
+	Vector2d & operator-= (const Vector2d & v);
+	Vector2d operator- (const Vector2d & v) const;
+
+	Vector2d & operator*= (const double a);
+	Vector2d operator* (const double a)const;
+	friend Vector2d operator* (const double a,const Vector2d & v);
+
+	Vector2d & operator/= (const double a);
+	Vector2d operator/ (const double a)const;
+
 	double length() const;
 	void normalize();
 };
 
-Vector2d operator+(const Vector2d &v);
-Vector2d operator-(const Vector2d &v);
 
 }
 

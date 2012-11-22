@@ -84,7 +84,7 @@ void Application::run()
 	frameClock.Reset();
 	globalClock.Reset();
 
-	float fps = 1/60.f;
+	float fps = 1/90.f;
 	int frameCount = 0;
 
 	window->ShowMouseCursor(true);

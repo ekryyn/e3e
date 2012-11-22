@@ -11,6 +11,16 @@ public:
 	Terrain();
 
 	void initFromMap(const Map &map);
+	Map::Cell getCell(float x, float y) const;
+
+
+private:
+
+	void bump();
+
+	float cellSize;
+
+	Map mMap;
 };
 
 #endif // TERRAIN_HPP

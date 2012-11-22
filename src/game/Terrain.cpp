@@ -4,17 +4,84 @@
 #include "../e3e/Vector2d.hpp"
 #include "../e3e/Vector3d.hpp"
 
-Terrain::Terrain()
+Terrain::Terrain() :
+	cellSize(1.f)
 {
+}
+
+Map::Cell Terrain::getCell(float x, float y) const
+{
+	unsigned int i, j;
+
+	i = y / cellSize * -1;
+	j = x / cellSize;
+
+	return mMap.getCell(i, j);
+}
+
+void Terrain::bump()
+{
+//	float err = .003f;
+
+	std::vector<e3e::Vector3d>::iterator it;
+	for(it=vertices.begin(); it != vertices.end(); it++)
+	{
+		e3e::Vector3d *v = &(*it);
+		bool on_border;
+
+		on_border = v->x / cellSize + 1 > mMap.width || v->y * -1 / cellSize + 1 > mMap.height;
+		if( !on_border )
+		{
+			Map::Cell cell = getCell(v->x, v->y);
+			if( cell.type == Map::PATH )
+			{
+				v->z -= .3;
+			}
+		}
+	}
 }
 
 void Terrain::initFromMap(const Map &map)
 {
-	float cellSize = 1;
-
-	unsigned int k = 0;
+	mMap = map;
 
 	unsigned int tw = 50 * map.width, th = 50 * map.height;
+
+	// Creating mesh
+	// .. vertices
+	for(unsigned int i = 0; i <= map.height; i++)
+	{
+		for(unsigned int j = 0; j <= map.width; j++)
+		{
+			e3e::Vector3d v(0,0,0);
+			v.x = j * cellSize;
+			v.y = i * cellSize * -1;
+			vertices.push_back(v);
+
+			e3e::Vector3d n(0,0,1);
+			vertexNormals.push_back(n);
+
+			e3e::Vector2d uv;
+			uv.x = ((float) j)/((float) map.width);
+			uv.y = 1.f - ( ((float) i) / ((float) map.height) );
+			uvCoords.push_back(uv);
+
+		}
+	}
+
+	// .. assembling faces
+	for(unsigned int i = 0; i < map.height; i++)
+	{
+		for(unsigned int j = 0; j < map.width; j++)
+		{
+			unsigned int ci = i*(map.width+1) + j;
+			e3e::Face f;
+			f.indices.push_back(ci + 0); f.indices.push_back(ci + 1);
+			f.indices.push_back(ci + (map.width+1) + 1); f.indices.push_back(ci + (map.width+1));
+			faces.push_back(f);
+		}
+	}
+
 
 	SDL_Surface *texture_surface, *yellow_surface, *green_surface;
 	SDL_Surface *current_surface;
@@ -38,47 +105,13 @@ void Terrain::initFromMap(const Map &map)
 	yellow_surface = IMG_Load("res/yellow.png");
 	green_surface = IMG_Load("res/green.png");
 
-	SDL_Rect cellImgPosition;
 
-	for(unsigned int i = 0; i< map.height; i++)
+	// generating texture :
+	SDL_Rect cellImgPosition;
+	for(unsigned int i = 0; i < map.height; i++)
 	{
 		for(unsigned int j = 0; j < map.width; j++)
 		{
-			e3e::Vector3d v1, v2, v3, v4;
-			e3e::Vector2d uv1, uv2, uv3, uv4;
-
-			v1.z = 0; v2.z = 0; v3.z = 0; v4.z = 0;
-
-			v1.x = j*cellSize; v1.y = i*cellSize*-1;
-			v2.x = (j+1)*cellSize; v2.y = i*cellSize*-1;
-			v3.x = (j+1)*cellSize; v3.y = (i+1)*cellSize*-1;
-			v4.x = j*cellSize; v4.y = (i+1)*cellSize*-1;
-
-			uv1.x = (float)j/map.width; uv1.y = 1.f - (float)(i+1)/map.height;
-			uv2.x = (float)(j+1)/map.width; uv2.y = 1.f - (float)(i+1)/map.height;
-			uv3.x = (float)(j+1)/map.width; uv3.y = 1.f - (float)(i)/map.height;
-			uv4.x = (float)j/map.width; uv4.y = 1.f - (float)(i)/map.height;
-
-
-			vertices.push_back(v1); vertices.push_back(v2);
-			vertices.push_back(v3); vertices.push_back(v4);
-
-			uvCoords.push_back(uv1); uvCoords.push_back(uv2);
-			uvCoords.push_back(uv3); uvCoords.push_back(uv4);
-
-			e3e::Vector3d n(0,0,1);
-			vertexNormals.push_back(n); vertexNormals.push_back(n);
-			vertexNormals.push_back(n); vertexNormals.push_back(n);
-
-			e3e::Face f;
-			f.indices.push_back( k++ ); f.indices.push_back( k++ );
-			f.indices.push_back( k++ ); f.indices.push_back( k++ );
-
-			faces.push_back(f);
-
-
-
-
 			// texture blit
 			cellImgPosition.y = i*50;
 			cellImgPosition.x = j*50;
@@ -98,7 +131,9 @@ void Terrain::initFromMap(const Map &map)
 	SDL_FreeSurface(green_surface);
 
 	normal_state.vertex_normals_ok = true;
-	//subdivideQuads();
+	subdivideQuads();
+
+//	bump();
 
 
 	material.diffuse = e3e::Color(1,0,0);
