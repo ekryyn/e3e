@@ -443,6 +443,7 @@ void e3e::Mesh::applyMaterial(Shader *shader)
 
 	if(material.texture.active)
 	{
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, material.texture.id);
 	}
 }

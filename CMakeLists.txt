@@ -22,6 +22,9 @@ include_directories(${SFML_INCLUDE_DIR})
 
 set(mainLibs ${SFML_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${SDL_IMAGE_LIBRARIES})
 
+
+include_directories(src/e3e/assimp/include/)
+
 file(
 	GLOB
 	MAIN_SOURCES
@@ -36,10 +39,12 @@ add_executable(e3e-graphics ${MAIN_SOURCES})
 target_link_libraries(e3e-graphics e3e ${mainLibs})
 
 configure_file(res/test.dae res/test.dae COPYONLY)
+configure_file(res/tree.dae res/tree.dae COPYONLY)
 
 configure_file(tex/earth.jpg tex/earth.jpg COPYONLY)
 configure_file(tex/test.jpg tex/test.jpg COPYONLY)
 configure_file(tex/coucou1.png tex/coucou1.png COPYONLY)
+configure_file(tex/tree.png tex/tree.png COPYONLY)
 
 configure_file(src/e3e/shaders/e3e.vert shaders/e3e.vert COPYONLY)
 configure_file(src/e3e/shaders/e3e.frag shaders/e3e.frag COPYONLY)

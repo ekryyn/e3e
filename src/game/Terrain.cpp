@@ -5,7 +5,8 @@
 #include "../e3e/Vector3d.hpp"
 
 Terrain::Terrain() :
-	cellSize(1.f)
+	cellSize(3.f),
+	sub(4)
 {
 }
 
@@ -19,28 +20,6 @@ Map::Cell Terrain::getCell(float x, float y) const
 	return mMap.getCell(i, j);
 }
 
-void Terrain::bump()
-{
-//	float err = .003f;
-
-	std::vector<e3e::Vector3d>::iterator it;
-	for(it=vertices.begin(); it != vertices.end(); it++)
-	{
-		e3e::Vector3d *v = &(*it);
-		bool on_border;
-
-		on_border = v->x / cellSize + 1 > mMap.width || v->y * -1 / cellSize + 1 > mMap.height;
-		if( !on_border )
-		{
-			Map::Cell cell = getCell(v->x, v->y);
-			if( cell.type == Map::PATH )
-			{
-				v->z -= .3;
-			}
-		}
-	}
-}
-
 void Terrain::initFromMap(const Map &map)
 {
 	mMap = map;
@@ -49,35 +28,51 @@ void Terrain::initFromMap(const Map &map)
 
 	// Creating mesh
 	// .. vertices
-	for(unsigned int i = 0; i <= map.height; i++)
+	for(unsigned int i = 0; i <= map.height * sub; i++)
 	{
-		for(unsigned int j = 0; j <= map.width; j++)
+		for(unsigned int j = 0; j <= map.width * sub; j++)
 		{
 			e3e::Vector3d v(0,0,0);
-			v.x = j * cellSize;
-			v.y = i * cellSize * -1;
+			v.x = j * (cellSize / sub);
+			v.y = i * (cellSize / sub) * -1;
+
+			/*
+			if(i != map.height * sub && j != map.width * sub)
+			{
+				Map::Cell cell = getCell(v.x, v.y);
+				Map::Cell prevx_cell = getCell(v.x - cellSize/sub, v.y);
+				Map::Cell prevy_cell = getCell(v.x, v.y + cellSize/sub);
+				if(cell.type == Map::PATH ||
+						prevx_cell.type == Map::PATH ||
+						prevy_cell.type == Map::PATH)
+				{
+					v.z = -cellSize/3.f;
+				}
+			}
+			*/
+
 			vertices.push_back(v);
 
 			e3e::Vector3d n(0,0,1);
 			vertexNormals.push_back(n);
 
 			e3e::Vector2d uv;
-			uv.x = ((float) j)/((float) map.width);
-			uv.y = 1.f - ( ((float) i) / ((float) map.height) );
+			uv.x = ((float) j)/((float) map.width * sub);
+			uv.y = 1.f - ( ((float) i) / ((float) map.height * sub) );
 			uvCoords.push_back(uv);
 
 		}
 	}
 
 	// .. assembling faces
-	for(unsigned int i = 0; i < map.height; i++)
+	for(unsigned int i = 0; i < map.height * sub; i++)
 	{
-		for(unsigned int j = 0; j < map.width; j++)
+		for(unsigned int j = 0; j < map.width * sub; j++)
 		{
-			unsigned int ci = i*(map.width+1) + j;
+			unsigned int ci = i*((map.width * sub)+1) + j;
 			e3e::Face f;
 			f.indices.push_back(ci + 0); f.indices.push_back(ci + 1);
-			f.indices.push_back(ci + (map.width+1) + 1); f.indices.push_back(ci + (map.width+1));
+			f.indices.push_back(ci + ((map.width * sub)+1) + 1); f.indices.push_back(ci + ((map.width * sub)+1));
 			faces.push_back(f);
 		}
 	}
@@ -122,7 +117,7 @@ void Terrain::initFromMap(const Map &map)
 	}
 
 	// test export
-	SDL_SaveBMP(texture_surface, "EXPORT.bmp");
+	SDL_SaveBMP(texture_surface, "EXPORT_col.bmp");
 
 	material.texture.loadTexture(texture_surface);
 
@@ -131,14 +126,12 @@ void Terrain::initFromMap(const Map &map)
 	SDL_FreeSurface(green_surface);
 
 	normal_state.vertex_normals_ok = true;
-	subdivideQuads();
-
-//	bump();
+//	subdivideQuads();
 
 
-	material.diffuse = e3e::Color(1,0,0);
-	normal_state.draw_vertex_normals = true;
-	normal_state.draw_face_normals = true;
+//	material.diffuse = e3e::Color(1,0,0);
+//	normal_state.draw_vertex_normals = true;
+//	normal_state.draw_face_normals = true;
 
 	initGeometry(false);
 	initOpenGL();

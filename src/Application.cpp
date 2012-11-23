@@ -7,6 +7,7 @@
 #include "EventManager.hpp"
 #include "KeyRegister.hpp"
 
+#include "e3e/MeshManager.hpp"
 #include "game/Terrain.hpp"
 #include "game/Map.hpp"
 #include "game/MapFileReader.hpp"
@@ -27,12 +28,11 @@ Application::Application():
 	window = new sf::Window(sf::VideoMode(w, h, 16), "SFML OpenGL", sf::Style::Close, settings);
 
 	fillColor = e3e::Color(.5,.5,.5);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
-		glEnable (GL_BLEND);
+//	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_COLOR_MATERIAL);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 	glEnable(GL_TEXTURE_2D);
 
 	GLenum code;
@@ -70,6 +70,9 @@ Application::Application():
 	terrain->initFromMap(reader.getMap());
 
 	currentScene->addNode( new e3e::Node(terrain) );
+
+	e3e::Node *parent = e3e::MeshManager::getInstance()->createNodeFromFile("res/tree.dae");
+	currentScene->addNode( parent );
 
 }
 

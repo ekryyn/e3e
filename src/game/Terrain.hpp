@@ -15,10 +15,8 @@ public:
 
 
 private:
-
-	void bump();
-
 	float cellSize;
+	unsigned int sub;
 
 	Map mMap;
 };

@@ -27,6 +27,7 @@ void main(void)
 	else {
 		diffuseLightColor = vec4(0, 0, 0, 0);
 	}
+	diffuseLightColor.w = 1;
 
 	vec4 colorToApply;
 	if(textureIsActive) {
@@ -38,5 +39,5 @@ void main(void)
 
 	outputColor = colorToApply * diffuseLightColor;
 
-//	outputColor = diffuseColor;
+//	outputColor = (texture2D(tex, uvCoord0.st));
 }
